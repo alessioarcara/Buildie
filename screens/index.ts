@@ -1,3 +1,4 @@
-export {default as Home} from "./Home/Home";
-export {default as SinglePlayer} from "./SinglePlayer/SinglePlayer";
-export {default as MultiPlayer} from "./MultiPlayer/MultiPlayer";
+export { default as HomeScreen } from "./Home/HomeScreen";
+export { default as SingleplayerScreen } from "./Singleplayer/SingleplayerScreen";
+export { default as MultiplayerScreen } from "./Multiplayer/MultiplayerScreen";
+export { default as ProfileScreen } from "./Profile/ProfileScreen";

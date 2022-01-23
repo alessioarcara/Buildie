@@ -1,5 +1,6 @@
 {
   "expo": {
+    "jsEngine": "hermes",
     "name": "Progetto-LAM",
     "slug": "Progetto-LAM",
     "version": "1.0.0",
@@ -27,6 +28,8 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
-  }
+    },
+    "sdkVersion": "44.0.0"
+  },
+  "name": "progetto-lam"
 }

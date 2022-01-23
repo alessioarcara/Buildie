@@ -13,7 +13,6 @@ import mongoose from "mongoose";
 
   const schema = await buildSchema({
     resolvers: [__dirname + "/**/*.resolver.ts"],
-    authChecker: ({ context: { req } }) => !!req.isAuth,
   });
 
   const subscriptionServer = SubscriptionServer.create(

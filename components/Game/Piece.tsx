@@ -1,7 +1,7 @@
-import React from "react";
 import { StyleSheet, Text, View } from "react-native";
+import React from "react";
 
-const MultiPlayer = () => {
+const Piece = () => {
   return (
     <View>
       <Text></Text>
@@ -9,6 +9,6 @@ const MultiPlayer = () => {
   );
 };
 
-export default MultiPlayer;
+export default Piece;
 
 const styles = StyleSheet.create({});
