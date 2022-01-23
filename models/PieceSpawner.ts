@@ -1,16 +1,16 @@
 import Shape from "./Shape";
-import shapes from "../constants/Shapes.json";
-import { randomInteger } from "../utils/utils";
 
 class PieceSpawner {
-  static pieceShapes = shapes;
+  _pieceShapes;
 
-  constructor() {}
+  constructor(shapes: { [key: string]: string }) {
+    this._pieceShapes = Object.values(shapes).map((shape) => new Shape(shape));
+  }
 
-  spawnRandomPiece() {
-    const shapeTypes = Object.keys(shapes);
-    const rndIndex = shapeTypes[randomInteger(0, shapeTypes.length - 1)];
-    return new Shape(shapes[rndIndex]).newPiece();
+  spawnRandomPiece(x: number, y: number) {
+    return this._pieceShapes[
+      Math.floor(Math.random() * this._pieceShapes.length)
+    ].newPiece(x, y);
   }
 }
 

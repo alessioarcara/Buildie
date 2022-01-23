@@ -1,10 +1,10 @@
 import { useRef, useEffect } from "react";
 
-const ms_per_update = 1000 / 60;
+const ms_per_update = 1000 / 1;
 let prevTime = performance.now();
 let lag = 0;
 
-const useGameLoop = (update: any) => {
+const useGameLoop = (update: any, draw: any) => {
   const rafRef = useRef<number | null>(null);
 
   const gameLoop = (time: number) => {
@@ -25,7 +25,7 @@ const useGameLoop = (update: any) => {
     }
 
     // draw step
-    console.log(lag / ms_per_update);
+    draw(lag / ms_per_update);
     requestAnimationFrame(gameLoop);
   };
 

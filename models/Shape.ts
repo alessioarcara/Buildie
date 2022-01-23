@@ -2,30 +2,17 @@ import Piece from "./Piece";
 
 class Shape {
   private _shape;
-  // starting position
-  private _x;
-  private _y;
 
-  constructor(shape: string, x: number, y: number) {
+  constructor(shape: string) {
     this._shape = shape;
-    this._x = x;
-    this._y = y;
   }
 
   get shape() {
     return this._shape;
   }
 
-  get x() {
-    return this._x;
-  }
-
-  get y() {
-    return this._y;
-  }
-
-  newPiece() {
-    return new Piece(this);
+  newPiece(x: number, y: number) {
+    return new Piece(this, x, y);
   }
 }
 

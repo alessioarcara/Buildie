@@ -1,15 +1,14 @@
 import BoardPool from "./BoardPool";
 import PieceSpawner from "./PieceSpawner";
+import shapes from "../constants/Shapes.json";
 
 class Game {
   private _boardPool;
 
   constructor(numPlayers: number) {
     this._boardPool = new BoardPool(numPlayers);
-
-    const piece = new PieceSpawner().spawnRandomPiece();
-
-    this.boardPool[0].init(piece);
+    const pieceSpawner = new PieceSpawner(shapes);
+    this.boardPool[0].init(pieceSpawner);
   }
 
   init() {}

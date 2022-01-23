@@ -1,15 +1,16 @@
 import Piece from "./Piece";
+import PieceSpawner from "./PieceSpawner";
 
 export const BOARD_HEIGHT = 24;
 export const BOARD_WIDTH = 12;
 
 class Board {
   private _board;
-  private currPiece: null | Piece;
+  private _currPiece: null | Piece;
 
   constructor() {
     this._board = new Uint8Array(BOARD_HEIGHT * BOARD_WIDTH);
-    this.currPiece = null;
+    this._currPiece = null;
 
     for (let yIndex = 0; yIndex < BOARD_HEIGHT; yIndex += 1)
       for (let xIndex = 0; xIndex < BOARD_WIDTH; xIndex += 1) {
@@ -22,34 +23,21 @@ class Board {
       }
   }
 
-  get board(): Uint8Array {
+  get board() {
     return this._board;
   }
 
-  init(piece: Piece) {
-    this.currPiece = piece;
-    for (let pyIndex = 0; pyIndex < 4; pyIndex += 1) {
-      for (let pxIndex = 0; pxIndex < 4; pxIndex += 1) {
-        const roiIndex = pyIndex * BOARD_WIDTH + (pxIndex + 4);
-        const pIndex = pyIndex * 4 + pxIndex;
-        this._board[roiIndex] = this._board[roiIndex] | +piece.shape[pIndex];
-      }
-    }
+  get currPiece() {
+    return this._currPiece;
   }
 
-  move() {}
+  init(pieceSpawner: PieceSpawner) {
+    this._currPiece = pieceSpawner.spawnRandomPiece((BOARD_WIDTH - 4) / 2, 0);
+  }
 
   update() {
-    for (let pyIndex = 0; pyIndex < 4; pyIndex += 1) {
-      for (let pxIndex = 0; pxIndex < 4; pxIndex += 1) {
-        const roiIndex =
-          pyIndex * BOARD_WIDTH + BOARD_HEIGHT * 4 + (pxIndex + 4);
-        const pIndex = pyIndex * 4 + pxIndex;
-        this._board[roiIndex] =
-          this._board[roiIndex] | +this.currPiece?.shape[pIndex];
-      }
-    }
-    // this.currPiece?.update();
+    this.currPiece?.update(this.board);
+    console.log(this.currPiece);
   }
 }
 
