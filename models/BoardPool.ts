@@ -15,11 +15,11 @@ class BoardPool {
     return this._pool;
   }
 
-  update() {
-    for (let i = 0; i < this._pool.length; i += 1) {
-      this._pool[i].update();
-    }
-  }
+  // update() {
+  //   for (let i = 0; i < this._pool.length; i += 1) {
+  //     this._pool[i].clearLines();
+  //   }
+  // }
 }
 
 export default BoardPool;

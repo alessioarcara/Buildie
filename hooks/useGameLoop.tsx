@@ -4,7 +4,7 @@ const ms_per_update = 1000 / 1;
 let prevTime = performance.now();
 let lag = 0;
 
-const useGameLoop = (update: any, draw: any) => {
+const useGameLoop = (update: () => void, draw: () => void) => {
   const rafRef = useRef<number | null>(null);
 
   const gameLoop = (time: number) => {
@@ -13,8 +13,10 @@ const useGameLoop = (update: any, draw: any) => {
     lag += elapsedTimeBetweenFrames;
     let loops = 0;
 
-    // update step
+    // input step
+    // processInput()
     while (lag >= ms_per_update) {
+      // update step
       update();
       lag -= ms_per_update;
       // sanity check
@@ -25,7 +27,9 @@ const useGameLoop = (update: any, draw: any) => {
     }
 
     // draw step
-    draw(lag / ms_per_update);
+    // unnecessary to draw if there aren't updates yet
+    // interpolate: lag / ms_per_update
+    draw();
     requestAnimationFrame(gameLoop);
   };
 

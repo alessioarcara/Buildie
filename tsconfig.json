@@ -7,8 +7,10 @@
       "@screens": ["./screens"],
       "@components": ["./components"],
       "@config/*": ["./config/*"],
+      "@constants/*": ["./constants/*"],
       "@store/*": ["./store/*"],
       "@hooks/*": ["./hooks/*"],
+      "@models/*": ["./models/*"],
     }
   }
 }

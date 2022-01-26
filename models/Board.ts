@@ -1,23 +1,16 @@
-import Piece from "./Piece";
-import PieceSpawner from "./PieceSpawner";
-
-export const BOARD_HEIGHT = 24;
-export const BOARD_WIDTH = 12;
-
 class Board {
   private _board;
-  private _currPiece: null | Piece;
+  private _nlines = 0;
+  static w = 12;
+  static h = 24;
 
   constructor() {
-    this._board = new Uint8Array(BOARD_HEIGHT * BOARD_WIDTH);
-    this._currPiece = null;
+    this._board = new Uint8Array(Board.h * Board.w);
 
-    for (let yIndex = 0; yIndex < BOARD_HEIGHT; yIndex += 1)
-      for (let xIndex = 0; xIndex < BOARD_WIDTH; xIndex += 1) {
-        this._board[yIndex * BOARD_WIDTH + xIndex] =
-          xIndex === 0 ||
-          xIndex === BOARD_WIDTH - 1 ||
-          yIndex === BOARD_HEIGHT - 1
+    for (let yIndex = 0; yIndex < Board.h; yIndex += 1)
+      for (let xIndex = 0; xIndex < Board.w; xIndex += 1) {
+        this._board[yIndex * Board.w + xIndex] =
+          xIndex === 0 || xIndex === Board.w - 1 || yIndex === Board.h - 1
             ? 9
             : 0;
       }
@@ -27,17 +20,28 @@ class Board {
     return this._board;
   }
 
-  get currPiece() {
-    return this._currPiece;
-  }
+  // update method
+  clearLines() {
+    // forward
+    for (let yFwIndex = 0; yFwIndex < Board.h - 1; yFwIndex += 1) {
+      let isFilled = true;
+      for (let xIndex = 0; xIndex < Board.w; xIndex += 1) {
+        if (this._board[yFwIndex * Board.w + xIndex] === 0) {
+          isFilled = false;
+          break;
+        }
+      }
 
-  init(pieceSpawner: PieceSpawner) {
-    this._currPiece = pieceSpawner.spawnRandomPiece((BOARD_WIDTH - 4) / 2, 0);
-  }
-
-  update() {
-    this.currPiece?.update(this.board);
-    console.log(this.currPiece);
+      if (isFilled) {
+        // backward
+        for (let yBwIndex = yFwIndex; yBwIndex > 0; yBwIndex -= 1)
+          for (let xIndex = 1; xIndex < Board.w - 1; xIndex += 1) {
+            this.board[yBwIndex * Board.w + xIndex] =
+              this.board[(yBwIndex - 1) * Board.w + xIndex];
+          }
+        this._nlines++;
+      }
+    }
   }
 }
 

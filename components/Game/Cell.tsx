@@ -1,7 +1,7 @@
 import { Dimensions, StyleSheet, View } from "react-native";
 import React from "react";
-import { BOARD_WIDTH } from "../../models/Board";
-import { squareColors } from "../../constants/Colors";
+import Board from "@models/Board";
+import { squareColors } from "@constants/Colors";
 // import { boardWidth } from "./Board";
 
 export const boardWidth = (Dimensions.get("window").width * 2) / 3;
@@ -28,8 +28,8 @@ export default React.memo(Cell);
 
 const styles = StyleSheet.create({
   cell: {
-    width: Math.floor(boardWidth / BOARD_WIDTH),
-    height: Math.floor(boardWidth / BOARD_WIDTH),
+    width: Math.floor(boardWidth / Board.w),
+    height: Math.floor(boardWidth / Board.w),
     borderBottomColor: "rgba(0, 0, 0, 0.5)",
     borderRightColor: "rgba(0, 0, 0, 0.15)",
     borderTopColor: "rgba(255, 255, 255, 0.33)",
