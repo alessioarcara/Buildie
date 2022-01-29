@@ -12,7 +12,7 @@ class Shape {
     this._shape = shape;
     this._x = x;
     this._y = y;
-    this._r = 0;
+    this._r = r;
   }
 
   get shape() {

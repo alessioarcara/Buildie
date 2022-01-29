@@ -1,6 +1,9 @@
+import Points from "@constants/Points";
+
 class Board {
   private _board;
   private _nlines = 0;
+  score = 0;
   static w = 12;
   static h = 24;
 
@@ -20,8 +23,14 @@ class Board {
     return this._board;
   }
 
+  get nlines() {
+    return this._nlines;
+  }
+
   // update method
-  clearLines() {
+  clearLines(pyIndex: number) {
+    console.log(pyIndex);
+    let clearedLines = 0;
     // forward
     for (let yFwIndex = 0; yFwIndex < Board.h - 1; yFwIndex += 1) {
       let isFilled = true;
@@ -34,14 +43,17 @@ class Board {
 
       if (isFilled) {
         // backward
+        console.log(yFwIndex);
         for (let yBwIndex = yFwIndex; yBwIndex > 0; yBwIndex -= 1)
           for (let xIndex = 1; xIndex < Board.w - 1; xIndex += 1) {
             this.board[yBwIndex * Board.w + xIndex] =
               this.board[(yBwIndex - 1) * Board.w + xIndex];
           }
+        clearedLines++;
         this._nlines++;
       }
     }
+    this.score += clearedLines * Points[clearedLines];
   }
 }
 

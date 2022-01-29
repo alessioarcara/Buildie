@@ -8,7 +8,7 @@ class ShapeFactory {
   constructor(initialShapes: { [key: string]: string }) {
     for (const shape in initialShapes) {
       this._shapeTypes.push(
-        new Shape(initialShapes[shape], (Board.w - Piece.w) / 2, 0, 0)
+        new Shape(initialShapes[shape], (Board.w - Piece.w) / 2, -1, 0)
       );
     }
   }

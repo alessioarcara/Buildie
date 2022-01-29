@@ -5,10 +5,13 @@ import Shape from "./Shape";
 class PiecePool {
   private _pool: Piece[];
   private _currPiece: Piece | null;
+  private _heldPiece: Piece | null;
+  doesNextPieceFit = true;
 
   constructor(shapes: Shape[], board: Board) {
     this._pool = new Array(shapes.length);
     this._currPiece = null;
+    this._heldPiece = null;
 
     for (let sIndex = 0; sIndex < shapes.length; sIndex += 1)
       this._pool[sIndex] = shapes[sIndex].newPiece(board);
@@ -22,19 +25,30 @@ class PiecePool {
     this._currPiece = newPiece;
   }
 
-  sample() {
+  nextPiece() {
     if (this.currPiece) {
       this.currPiece.reset();
       this._pool.push(this.currPiece);
     }
-    this.currPiece = this._pool.splice(
-      Math.floor(Math.random() * this._pool.length),
-      1
-    )[0];
+
+    const rndIndex = Math.floor(Math.random() * this._pool.length);
+    this.doesNextPieceFit = !this._pool[rndIndex].collides();
+    if (this.doesNextPieceFit)
+      this.currPiece = this._pool.splice(rndIndex, 1)[0];
+  }
+
+  holdPiece() {
+    if (!this.currPiece?.collided) {
+      this._heldPiece = this.currPiece;
+      this.currPiece = null;
+      this.nextPiece();
+    }
   }
 
   update() {
-    !this._currPiece?.collided ? this.currPiece?.moveDown() : this.sample();
+    this.currPiece && !this.currPiece.collided
+      ? this.currPiece?.moveDown()
+      : this.nextPiece();
   }
 }
 

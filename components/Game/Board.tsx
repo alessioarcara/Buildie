@@ -7,7 +7,7 @@ import BoardClass from "@models/Board";
 export const boardWidth = (Dimensions.get("window").width * 2) / 3;
 
 type BoardProps = {
-  currPiece: Piece;
+  currPiece: Piece | null;
   board: number[];
 };
 
@@ -25,6 +25,8 @@ const drawPiece = (board: JSX.Element[], piece: Piece) => {
   return newBoard;
 };
 
+const drawGhostPiece = () => {};
+
 const Board = ({ currPiece, board }: BoardProps) => {
   const currBoard = useMemo(
     () =>
@@ -36,7 +38,9 @@ const Board = ({ currPiece, board }: BoardProps) => {
 
   return (
     <View style={styles.gridContainer}>
-      <View style={styles.grid}>{drawPiece(currBoard, currPiece)}</View>
+      <View style={styles.grid}>
+        {currPiece ? drawPiece(currBoard, currPiece) : currBoard}
+      </View>
     </View>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useLayoutEffect, useMemo } from "react";
 import { StyleSheet, View } from "react-native";
 import Board from "./Board";
 import { useConst } from "@hooks/useConst";
@@ -6,27 +6,43 @@ import GameClass from "@models/Game";
 import useGameLoop from "@hooks/useGameLoop";
 import Joystick from "./Joystick";
 import { useForceUpdate } from "@hooks/useForceUpdate";
+import { useNavigation } from "@react-navigation/native";
+import GameHeader from "../UI/GameHeader";
 
 const Game = () => {
-  const game = useConst(() => new GameClass(1));
+  const navigation = useNavigation();
+  const game = useConst(() => new GameClass(1, 1));
+
+  const draw = useForceUpdate();
 
   const handleInput = useCallback((keyCode: string) => {
-    game.piecePool[0].currPiece?.inputHandler(keyCode);
+    game.playerPool[0].currPiece?.inputHandler(keyCode);
+    draw();
   }, []);
 
   const update = useCallback(() => {
     game.update();
   }, []);
 
-  const draw = useForceUpdate();
+  const gameLoop = useGameLoop(game.playerPool[0].speed, update, draw);
 
-  const gameLoop = useGameLoop(update, draw);
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      header: () => (
+        <GameHeader
+          speed={game.playerPool[0].speed}
+          lines={game.playerPool[0].nlines}
+          score={game.playerPool[0].score}
+        />
+      ),
+    });
+  }, [game.playerPool[0].speed, game.playerPool[0].nlines]);
 
   return (
     <View style={styles.game}>
       <Board
-        currPiece={game.piecePool[0].currPiece!}
-        board={Array.from(game.boardPool[0].board)}
+        currPiece={game.playerPool[0].currPiece}
+        board={Array.from(game.playerPool[0].board)}
       />
       <Joystick handleInput={handleInput} />
     </View>
@@ -39,6 +55,6 @@ const styles = StyleSheet.create({
   game: {
     width: "100%",
     height: "100%",
-    justifyContent: "center",
+    justifyContent: "flex-end",
   },
 });

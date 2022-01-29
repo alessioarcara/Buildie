@@ -1,4 +1,4 @@
-import Commands from "../constants/Commands";
+import Commands from "@constants/Commands";
 import Board from "./Board";
 import Shape from "./Shape";
 
@@ -53,7 +53,7 @@ class Piece {
     }
   }
 
-  private collides(new_x: number, new_y: number, new_r: number) {
+  collides(new_x = this.x, new_y = this.y, new_r = this.r) {
     for (let pyIndex = 0; pyIndex < Piece.w; pyIndex += 1)
       for (let pxIndex = 0; pxIndex < Piece.w; pxIndex += 1) {
         if (
@@ -76,30 +76,32 @@ class Piece {
 
   // update method
   moveDown() {
-    if (this.collides(this.x, this.y + 1, this.r)) {
-      this.lock();
+    if (this.collides(this.x, this.y + 1)) {
       this.collided = true;
-      this._board.clearLines();
+      this.lock();
+      this._board.clearLines(this.y);
       return;
     }
     this.y += 1;
   }
 
   private moveLeft() {
-    this.x -= !this.collides(this.x - 1, this.y, this.r) ? 1 : 0;
+    this.x -= !this.collides(this.x - 1) ? 1 : 0;
   }
 
   private moveRight() {
-    this.x += !this.collides(this.x + 1, this.y, this.r) ? 1 : 0;
+    this.x += !this.collides(this.x + 1) ? 1 : 0;
   }
 
   private wallKick(offset = 0): number {
+    // stop
     if (
       !this.collides(this.x + offset, this.y, this.r + 1) ||
       offset < -1 ||
       offset > 1
     ) {
       return offset;
+      // recursive
     } else {
       return this.wallKick((offset += this.x > Board.w / 2 ? -1 : 1));
     }
@@ -108,10 +110,14 @@ class Piece {
   private rotateRight() {
     // wall kick
     const offset = this.wallKick();
-    if (!this.collides(this.x + offset, this.y, this.r + 1)) {
+    if (!this.collides(this.x + this.wallKick(), this.y, this.r + 1)) {
       this.x += offset;
       this.r += 1;
     }
+  }
+
+  private hardDrop() {
+    while (!this.collided) this.moveDown();
   }
 
   inputHandler(keyCode: string) {
@@ -120,6 +126,7 @@ class Piece {
     else if (keyCode === Commands.MoveRight) this.moveRight();
     else if (keyCode === Commands.MoveDown) this.moveDown();
     else if (keyCode === Commands.RotateRight) this.rotateRight();
+    else if (keyCode === Commands.HardDrop) this.hardDrop();
   }
 }
 

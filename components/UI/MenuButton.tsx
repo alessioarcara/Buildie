@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ViewStyle,
   TouchableOpacityProps,
+  TouchableWithoutFeedback,
 } from "react-native";
 
 type MainButtonProps = {
@@ -15,11 +16,11 @@ type MainButtonProps = {
 
 const MenuButton = ({ children, style, ...props }: MainButtonProps) => {
   return (
-    <TouchableOpacity activeOpacity={0.6} {...props}>
+    <TouchableWithoutFeedback {...props}>
       <View style={[styles.button, style]}>
         <Text style={styles.buttonText}>{children}</Text>
       </View>
-    </TouchableOpacity>
+    </TouchableWithoutFeedback>
   );
 };
 
