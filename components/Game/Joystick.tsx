@@ -34,7 +34,7 @@ const Joystick = ({ handleInput }: JoystickProps) => {
       <View style={styles.joystickButtons}>
         <JoystickButton
           icon="exchange"
-          pressHandler={() => handleInput(Commands.RotateRight)}
+          pressHandler={() => handleInput(Commands.HoldPiece)}
         />
         <JoystickButton
           icon="rotate-right"

@@ -8,15 +8,16 @@ import Joystick from "./Joystick";
 import { useForceUpdate } from "@hooks/useForceUpdate";
 import { useNavigation } from "@react-navigation/native";
 import GameHeader from "../UI/GameHeader";
+import Hold from "./Hold";
 
 const Game = () => {
   const navigation = useNavigation();
-  const game = useConst(() => new GameClass(1, 1));
+  const game = useConst(() => new GameClass());
 
   const draw = useForceUpdate();
 
   const handleInput = useCallback((keyCode: string) => {
-    game.playerPool[0].currPiece?.inputHandler(keyCode);
+    game.inputHandler(keyCode);
     draw();
   }, []);
 
@@ -24,26 +25,25 @@ const Game = () => {
     game.update();
   }, []);
 
-  const gameLoop = useGameLoop(game.playerPool[0].speed, update, draw);
+  const gameLoop = useGameLoop(game.speed, update, draw);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <GameHeader
-          speed={game.playerPool[0].speed}
-          lines={game.playerPool[0].nlines}
-          score={game.playerPool[0].score}
-        />
+        <GameHeader speed={game.speed} lines={game.nlines} score={game.score} />
       ),
     });
-  }, [game.playerPool[0].speed, game.playerPool[0].nlines]);
+  }, [game.speed, game.nlines, game.score]);
 
   return (
-    <View style={styles.game}>
-      <Board
-        currPiece={game.playerPool[0].currPiece}
-        board={Array.from(game.playerPool[0].board)}
-      />
+    <View style={styles.gameContainer}>
+      <View style={styles.game}>
+        <Board currPiece={game.currPiece} board={Array.from(game.board)} />
+        <View>
+          <Hold label="Hold" heldPiece={game.heldPiece} />
+          <Hold label="Next" heldPiece={game.nextPiece} />
+        </View>
+      </View>
       <Joystick handleInput={handleInput} />
     </View>
   );
@@ -52,9 +52,13 @@ const Game = () => {
 export default Game;
 
 const styles = StyleSheet.create({
-  game: {
+  gameContainer: {
     width: "100%",
     height: "100%",
+    alignItems: "center",
     justifyContent: "flex-end",
+  },
+  game: {
+    flexDirection: "row",
   },
 });

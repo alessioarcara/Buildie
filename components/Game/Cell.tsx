@@ -1,23 +1,21 @@
-import { Dimensions, StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
 import React from "react";
-import Board from "@models/Board";
 import { squareColors } from "@constants/Colors";
-// import { boardWidth } from "./Board";
-
-export const boardWidth = (Dimensions.get("window").width * 2) / 3;
 
 type CellProps = {
   type: number;
+  width: number;
 };
 
-const Cell = ({ type }: CellProps) => {
+const Cell = ({ type, width }: CellProps) => {
   return (
     <View
       style={{
         ...styles.cell,
         ...{
+          width,
+          height: width,
           backgroundColor: squareColors[type],
-          borderWidth: type === 0 ? 1 : 4,
         },
       }}
     />
@@ -28,11 +26,11 @@ export default React.memo(Cell);
 
 const styles = StyleSheet.create({
   cell: {
-    width: Math.floor(boardWidth / Board.w),
-    height: Math.floor(boardWidth / Board.w),
-    borderBottomColor: "rgba(0, 0, 0, 0.5)",
-    borderRightColor: "rgba(0, 0, 0, 0.15)",
-    borderTopColor: "rgba(255, 255, 255, 0.33)",
-    borderLeftColor: "rgba(255, 255, 255, 0.20)",
+    borderBottomWidth: 2,
+    borderColor: "black",
+    // borderBottomColor: "rgba(0, 0, 0, 0.5)",
+    // borderRightColor: "rgba(0, 0, 0, 0.15)",
+    // borderTopColor: "rgba(255, 255, 255, 0.33)",
+    // borderLeftColor: "rgba(255, 255, 255, 0.20)",
   },
 });

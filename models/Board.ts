@@ -3,11 +3,13 @@ import Points from "@constants/Points";
 class Board {
   private _board;
   private _nlines = 0;
+  speed;
   score = 0;
   static w = 12;
   static h = 24;
 
-  constructor() {
+  constructor(initialSpeed: number) {
+    this.speed = initialSpeed;
     this._board = new Uint8Array(Board.h * Board.w);
 
     for (let yIndex = 0; yIndex < Board.h; yIndex += 1)
@@ -29,10 +31,9 @@ class Board {
 
   // update method
   clearLines(pyIndex: number) {
-    console.log(pyIndex);
     let clearedLines = 0;
     // forward
-    for (let yFwIndex = 0; yFwIndex < Board.h - 1; yFwIndex += 1) {
+    for (let yFwIndex = pyIndex; yFwIndex < Board.h - 1; yFwIndex += 1) {
       let isFilled = true;
       for (let xIndex = 0; xIndex < Board.w; xIndex += 1) {
         if (this._board[yFwIndex * Board.w + xIndex] === 0) {
@@ -43,7 +44,6 @@ class Board {
 
       if (isFilled) {
         // backward
-        console.log(yFwIndex);
         for (let yBwIndex = yFwIndex; yBwIndex > 0; yBwIndex -= 1)
           for (let xIndex = 1; xIndex < Board.w - 1; xIndex += 1) {
             this.board[yBwIndex * Board.w + xIndex] =
@@ -53,7 +53,10 @@ class Board {
         this._nlines++;
       }
     }
-    this.score += clearedLines * Points[clearedLines];
+    // scoring
+    this.score += this.speed * clearedLines * Points[clearedLines];
+    // speed
+    this.speed = Math.floor((this.nlines + 10) / 10);
   }
 }
 

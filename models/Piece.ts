@@ -1,4 +1,3 @@
-import Commands from "@constants/Commands";
 import Board from "./Board";
 import Shape from "./Shape";
 
@@ -85,11 +84,11 @@ class Piece {
     this.y += 1;
   }
 
-  private moveLeft() {
+  moveLeft() {
     this.x -= !this.collides(this.x - 1) ? 1 : 0;
   }
 
-  private moveRight() {
+  moveRight() {
     this.x += !this.collides(this.x + 1) ? 1 : 0;
   }
 
@@ -107,7 +106,7 @@ class Piece {
     }
   }
 
-  private rotateRight() {
+  rotateRight() {
     // wall kick
     const offset = this.wallKick();
     if (!this.collides(this.x + this.wallKick(), this.y, this.r + 1)) {
@@ -116,17 +115,8 @@ class Piece {
     }
   }
 
-  private hardDrop() {
+  hardDrop() {
     while (!this.collided) this.moveDown();
-  }
-
-  inputHandler(keyCode: string) {
-    if (this.collided) return;
-    if (keyCode === Commands.MoveLeft) this.moveLeft();
-    else if (keyCode === Commands.MoveRight) this.moveRight();
-    else if (keyCode === Commands.MoveDown) this.moveDown();
-    else if (keyCode === Commands.RotateRight) this.rotateRight();
-    else if (keyCode === Commands.HardDrop) this.hardDrop();
   }
 }
 

@@ -27,8 +27,10 @@ export default GameHeader;
 const styles = StyleSheet.create({
   gameHeader: {
     flexDirection: "row",
-    height: Dimensions.get("window").height * 0.11,
+    height: Dimensions.get("window").height * 0.13,
     width: "100%",
-    backgroundColor: "rgba(0,0,255, 0.8)",
+    borderBottomWidth: 2,
+    borderColor: "#bbb",
+    backgroundColor: "#000",
   },
 });

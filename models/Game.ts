@@ -1,28 +1,58 @@
 import ShapeFactory from "./ShapeFactory";
 import shapes from "@constants/Shapes.json";
-import Player from "./Player";
+import Board from "./Board";
+import PiecePool from "./PiecePool";
 
 class Game {
-  private _playerPool: Player[];
-  private _shapes;
+  private _piecePool;
+  private _board;
 
-  constructor(numPlayers: number, initialSpeed: number) {
-    this._shapes = new ShapeFactory(shapes);
-    this._playerPool = new Array(numPlayers);
-
-    for (let i = 0; i < numPlayers; i += 1) {
-      this._playerPool[i] = new Player(this._shapes.shapeTypes, initialSpeed);
-    }
+  constructor(initialSpeed = 1) {
+    this._board = new Board(initialSpeed);
+    this._piecePool = new PiecePool(
+      new ShapeFactory(shapes).shapeTypes,
+      this._board
+    );
   }
 
-  get playerPool() {
-    return this._playerPool;
+  get board() {
+    return this._board.board;
+  }
+
+  get currPiece() {
+    return this._piecePool.currPiece;
+  }
+
+  get nextPiece() {
+    return this._piecePool.nextPiece?.shape;
+  }
+
+  get heldPiece() {
+    return this._piecePool.heldPiece?.shape;
+  }
+
+  get speed() {
+    return this._board.speed;
+  }
+
+  get nlines() {
+    return this._board.nlines;
+  }
+
+  get score() {
+    return this._board.score;
+  }
+
+  get gameOver() {
+    return !this._piecePool.doesNextPieceFit;
+  }
+
+  get inputHandler() {
+    return this._piecePool.inputHandler;
   }
 
   update() {
-    for (let i = 0; i < this._playerPool.length; i += 1) {
-      this._playerPool[i].update();
-    }
+    this._piecePool.update();
   }
 }
 
