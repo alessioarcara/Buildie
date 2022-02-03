@@ -9,3 +9,5 @@ export const squareColors: { [key: number]: string } = {
   7: "#AA00FF",
   9: "#808080",
 };
+
+export enum appColors {}

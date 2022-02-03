@@ -18,9 +18,15 @@ export class AuthData {
 export class AuthenticatePayload extends MutationPayload(AuthData) {}
 
 @InputType()
-export class AuthenticateInput implements Pick<User, "email" | "password"> {
+export class SigninInput implements Pick<User, "email" | "password"> {
   @Field()
   email: string;
   @Field()
   password: string;
+}
+
+@InputType()
+export class SignupInput extends SigninInput implements Pick<User, "username"> {
+  @Field()
+  username: string;
 }

@@ -7,7 +7,7 @@ import {
   ActivityIndicator,
   View,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Card, DefaultButton, GradientBackground, Input } from "@components";
 import { useSigninMutation, useSignupMutation } from "../services/gameApi";
 import useForm from "../hooks/useForm";
@@ -18,7 +18,7 @@ import defaultStyles from "@constants/defaultStyles";
 const AuthScreen = () => {
   const [isNewUser, setIsNewUser] = useState(false);
   const [{ inputValues, inputValidities, formIsValid }, inputChangeHandler] =
-    useForm({ email: "", password: "" });
+    useForm({ username: "", email: "", password: "" });
   const dispatch = useAppDispatch();
 
   const [signin, { isLoading }] = useSigninMutation({
@@ -26,14 +26,25 @@ const AuthScreen = () => {
   });
   const [signup] = useSignupMutation({ fixedCacheKey: "shared-auth" });
 
+  const handleErrorResponse = useCallback(
+    (error: string = "Something went wrong!") => {
+      Alert.alert("There's a problem", error), [{ text: "Okay" }];
+    },
+    []
+  );
+
   const authHandler = () => {
-    const user = { email: inputValues.email, password: inputValues.password };
-    (isNewUser ? signup(user) : signin(user)).unwrap().then((authResponse) => {
-      authResponse.data
-        ? dispatch(authenticate(authResponse.data))
-        : Alert.alert("There's a problem!", authResponse.problem),
-        [{ text: "Okay" }];
-    });
+    const { username, ...user } = inputValues;
+    (isNewUser ? signup(inputValues) : signin(user))
+      .unwrap()
+      .then((authResponse) => {
+        authResponse.data
+          ? dispatch(authenticate(authResponse.data))
+          : handleErrorResponse(authResponse.problem);
+      })
+      .catch(() => {
+        handleErrorResponse();
+      });
   };
 
   return (
@@ -44,6 +55,19 @@ const AuthScreen = () => {
       >
         <Card style={styles.formContainer}>
           <ScrollView>
+            {isNewUser && (
+              <Input
+                id="username"
+                label="USERNAME"
+                value={inputValues.username}
+                onInputChange={inputChangeHandler}
+                required
+                minLength={6}
+                autoCapitalize="none"
+                error={!inputValidities.username}
+                errorText="Please enter a valid username."
+              />
+            )}
             <Input
               id="email"
               label="EMAIL"
@@ -51,6 +75,7 @@ const AuthScreen = () => {
               onInputChange={inputChangeHandler}
               required
               email
+              minLength={10}
               keyboardType="email-address"
               autoCapitalize="none"
               error={!inputValidities.email}
@@ -63,7 +88,7 @@ const AuthScreen = () => {
               onInputChange={inputChangeHandler}
               required
               secureTextEntry
-              minLength={5}
+              minLength={6}
               autoCapitalize="none"
               error={!inputValidities.password}
               errorText="Please enter a valid password."
@@ -75,7 +100,11 @@ const AuthScreen = () => {
             ) : (
               <DefaultButton
                 style={styles.button}
-                disabled={!formIsValid}
+                disabled={
+                  isNewUser
+                    ? !formIsValid
+                    : !inputValidities.email || !inputValidities.password
+                }
                 onPress={authHandler}
               >
                 {isNewUser ? "REGISTER" : "LOGIN"}

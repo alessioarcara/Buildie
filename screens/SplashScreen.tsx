@@ -6,6 +6,7 @@ import { USER_DATA } from "@store/authThunk";
 import { GradientBackground } from "@components";
 import { setDidTryToLogin, login } from "@store/auth";
 import defaultStyles from "@constants/defaultStyles";
+import { AuthData } from "@models/User";
 
 const SplashScreen = () => {
   const dispatch = useAppDispatch();
@@ -17,7 +18,7 @@ const SplashScreen = () => {
         dispatch(setDidTryToLogin());
         return;
       }
-      const transformedData = JSON.parse(userData);
+      const transformedData = JSON.parse(userData) as AuthData;
 
       dispatch(login(transformedData));
     })();

@@ -4,18 +4,15 @@ import { invalidate } from "@store/authThunk";
 import { useAppDispatch } from "@store/hooks";
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { useHelloWorldQuery } from "../services/gameApi";
 
 const Profile = () => {
   const dispatch = useAppDispatch();
-  const { data } = useHelloWorldQuery();
   return (
     <GradientBackground>
       <View style={defaultStyles.centered}>
         <DefaultButton onPress={() => dispatch(invalidate())}>
-          Ciao
+          Logout
         </DefaultButton>
-        <DefaultText>{data}</DefaultText>
       </View>
     </GradientBackground>
   );

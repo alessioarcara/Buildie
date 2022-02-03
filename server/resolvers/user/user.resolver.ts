@@ -1,13 +1,17 @@
-import { Arg, Mutation, Query, Resolver, UseMiddleware } from "type-graphql";
-import { AuthenticatePayload, AuthenticateInput, AuthData } from "./userTypes";
+import { Arg, Mutation, Resolver } from "type-graphql";
+import {
+  AuthenticatePayload,
+  AuthData,
+  SignupInput,
+  SigninInput,
+} from "./userTypes";
 import { UserModel } from "../../models/User";
 import { compare } from "bcryptjs";
-import { isAuth } from "../../middlewares/isAuth";
 import { createTokens, decodeRefreshToken } from "../../utils/auth";
 import { AuthenticationError } from "apollo-server-express";
 import {
   INVALID_REFRESH_TOKEN,
-  EMAIL_NOT_FOUND,
+  USER_NOT_FOUND,
   INVALID_PASSWORD,
   EMAIL_EXISTS,
 } from "../../utils/constants";
@@ -15,9 +19,7 @@ import {
 @Resolver()
 export default class UserResolver {
   @Mutation(() => AuthenticatePayload)
-  async signup(
-    @Arg("input") input: AuthenticateInput
-  ): Promise<AuthenticatePayload> {
+  async signup(@Arg("input") input: SignupInput): Promise<AuthenticatePayload> {
     const existingUser = await UserModel.findOne({ email: input.email }).lean();
     if (existingUser) return { problem: EMAIL_EXISTS };
 
@@ -30,10 +32,10 @@ export default class UserResolver {
 
   @Mutation(() => AuthenticatePayload)
   async signin(
-    @Arg("input") { email, password }: AuthenticateInput
+    @Arg("input") { email, password }: SigninInput
   ): Promise<AuthenticatePayload> {
     const user = await UserModel.findOne({ email }).lean();
-    if (!user) return { problem: EMAIL_NOT_FOUND };
+    if (!user) return { problem: USER_NOT_FOUND };
 
     const valid = await compare(password, user.password);
     if (!valid) return { problem: INVALID_PASSWORD };
@@ -72,12 +74,5 @@ export default class UserResolver {
     await user.save();
 
     return true;
-  }
-
-  @Query(() => String)
-  @UseMiddleware(isAuth)
-  async helloWorld() {
-    console.log("EH BEH ECCOMI");
-    return "Ciao Mondo";
   }
 }

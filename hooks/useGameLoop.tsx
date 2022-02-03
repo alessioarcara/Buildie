@@ -37,6 +37,13 @@ const useGameLoop = (speed: number, update: () => void, draw: () => void) => {
     rafRef.current && cancelAnimationFrame(rafRef.current);
   };
 
+  useLayoutEffect(() => {
+    rafRef.current = requestAnimationFrame(gameLoop);
+    return () => {
+      rafRef.current && cancelAnimationFrame(rafRef.current);
+    };
+  }, [speed]);
+
   return { start, stop };
 };
 

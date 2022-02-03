@@ -1,5 +1,11 @@
-import React, { useCallback, useLayoutEffect } from "react";
-import { StyleSheet, View, Image, TouchableOpacity } from "react-native";
+import React, { useCallback, useEffect, useLayoutEffect, useRef } from "react";
+import {
+  StyleSheet,
+  View,
+  Image,
+  TouchableOpacity,
+  AppState,
+} from "react-native";
 import Board from "./Board";
 import useConst from "@hooks/useConst";
 import GameClass from "@models/Game";
@@ -11,12 +17,14 @@ import GameHeader from "../UI/GameHeader";
 import Piece from "./Piece";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorParams } from "@config/GameNavigator";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Game = () => {
   const navigation =
     useNavigation<
       NativeStackNavigationProp<StackNavigatorParams, "Singleplayer">
     >();
+  const appState = useRef(AppState.currentState);
   const game = useConst(() => new GameClass());
 
   const draw = useForceUpdate();
@@ -32,6 +40,35 @@ const Game = () => {
 
   const { start, stop } = useGameLoop(game.speed, update, draw);
 
+  const saveGameStateToStorage = () => {
+    AsyncStorage.setItem(
+      "gameState",
+      JSON.stringify({
+        board: game.board,
+        currPiece: game.currPiece,
+        heldPiece: game.heldPiece,
+        nextPiece: game.nextPiece,
+      })
+    );
+  };
+
+  const handleAppStateChange = useCallback((nextAppState) => {
+    if (
+      appState.current === "active" &&
+      nextAppState.match(/inactive|background/)
+    ) {
+      saveGameStateToStorage();
+    }
+    appState.current = nextAppState;
+  }, []);
+
+  useEffect(() => {
+    AppState.addEventListener("change", handleAppStateChange);
+    return () => {
+      AppState.removeEventListener("change", handleAppStateChange);
+    };
+  }, []);
+
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
@@ -39,13 +76,6 @@ const Game = () => {
       ),
     });
   }, [game.speed, game.nlines, game.score]);
-
-  useLayoutEffect(() => {
-    start();
-    return () => {
-      stop();
-    };
-  }, []);
 
   return (
     <View style={styles.gameContainer}>

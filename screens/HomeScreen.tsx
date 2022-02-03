@@ -7,7 +7,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { squareColors } from "@constants/Colors";
 import { useAppSelector } from "@store/hooks";
 
-const menuOptions = ["Singleplayer", "Multiplayer", "Settings"];
+const menuOptions = ["Singleplayer", "Resume", "Multiplayer", "Settings"];
 
 type HomeProps = {
   navigation: NativeStackNavigationProp<StackNavigatorParams, "Root">;
@@ -32,18 +32,23 @@ const Home = ({ navigation }: HomeProps) => {
             </Text>
           ))}
         </DefaultText>
-        {menuOptions.map((menuOption) => (
-          <DefaultButton
-            key={menuOption}
-            style={styles.homeButton}
-            disabled={menuOption === "Multiplayer" && !isSignedIn}
-            onPress={() => {
-              navigation.navigate("Singleplayer", { gameId: "asd123" });
-            }}
-          >
-            {menuOption}
-          </DefaultButton>
-        ))}
+        {menuOptions.reduce<JSX.Element[]>((acc, menuOption) => {
+          return menuOption !== "Resume"
+            ? [
+                ...acc,
+                <DefaultButton
+                  key={menuOption}
+                  style={styles.homeButton}
+                  disabled={menuOption === "Multiplayer" && !isSignedIn}
+                  onPress={() => {
+                    navigation.navigate("Singleplayer", { gameId: "asd123" });
+                  }}
+                >
+                  {menuOption}
+                </DefaultButton>,
+              ]
+            : acc;
+        }, [])}
       </View>
     </GradientBackground>
   );

@@ -7,7 +7,7 @@ import {
   SIGNIN_MUTATION,
   SIGNUP_MUTATION,
 } from "./gqlConfig";
-import { AuthRequest } from "../models/User";
+import { SigninRequest, SignupRequest } from "../Types/User";
 import { RootState } from "@store/index";
 import { graphqlRequestBaseQueryArgs } from "./graphqlBaseQueryTypes";
 import { authenticate, invalidate } from "@store/authThunk";
@@ -32,6 +32,7 @@ const graphqlBaseQueryWithReauth =
       return { data: await request(baseUrl, body, variables, await headers()) };
     } catch (error) {
       if (error instanceof ClientError) {
+        console.log(error);
         if (
           error.response.errors?.some(
             (e) => e.extensions?.code === "UNAUTHENTICATED"
@@ -53,6 +54,9 @@ const graphqlBaseQueryWithReauth =
         const { name, message, stack } = error;
         return { error: { name, message, stack } };
       }
+      if (error instanceof Error) {
+        return { error: { name: "Error", message: error.message } };
+      }
       throw error;
     }
   };
@@ -70,7 +74,7 @@ export const gameApi = createApi({
     },
   }),
   endpoints: (builder) => ({
-    signup: builder.mutation<AuthenticatePayload, AuthRequest>({
+    signup: builder.mutation<AuthenticatePayload, SignupRequest>({
       query: (user) => ({
         body: SIGNUP_MUTATION,
         variables: { input: user },
@@ -78,7 +82,7 @@ export const gameApi = createApi({
       transformResponse: (response: { signup: AuthenticatePayload }) =>
         response.signup,
     }),
-    signin: builder.mutation<AuthenticatePayload, AuthRequest>({
+    signin: builder.mutation<AuthenticatePayload, SigninRequest>({
       query: (user) => ({
         body: SIGNIN_MUTATION,
         variables: { input: user },
@@ -86,19 +90,7 @@ export const gameApi = createApi({
       transformResponse: (response: { signin: AuthenticatePayload }) =>
         response.signin,
     }),
-    helloWorld: builder.query<string, void>({
-      query: () => ({
-        body: gql`
-          query {
-            helloWorld
-          }
-        `,
-      }),
-      transformResponse: (response: { helloWorld: string }) =>
-        response.helloWorld,
-    }),
   }),
 });
 
-export const { useSignupMutation, useSigninMutation, useHelloWorldQuery } =
-  gameApi;
+export const { useSignupMutation, useSigninMutation } = gameApi;

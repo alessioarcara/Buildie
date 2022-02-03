@@ -1,7 +1,7 @@
 import { gql } from "graphql-request";
 
 export const SIGNUP_MUTATION = gql`
-  mutation ($input: AuthenticateInput!) {
+  mutation ($input: SignupInput!) {
     signup(input: $input) {
       data {
         accessToken
@@ -14,7 +14,7 @@ export const SIGNUP_MUTATION = gql`
 `;
 
 export const SIGNIN_MUTATION = gql`
-  mutation ($input: AuthenticateInput!) {
+  mutation ($input: SigninInput!) {
     signin(input: $input) {
       data {
         accessToken

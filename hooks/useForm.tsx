@@ -2,6 +2,7 @@ import { useCallback, useReducer } from "react";
 
 export enum FormActionType {
   FORM_UPDATE = "FORM_UPDATE",
+  FORM_RESET = "FORM_RESET",
 }
 
 type FormState<T> = {
@@ -21,16 +22,16 @@ type FormAction = {
 
 const createFormReducer =
   <T,>() =>
-  (state: FormState<T>, { type, payload }: FormAction): FormState<T> => {
-    switch (type) {
+  (state: FormState<T>, formAction: FormAction): FormState<T> => {
+    switch (formAction.type) {
       case FormActionType.FORM_UPDATE:
         const updatedValues = {
           ...state.inputValues,
-          [payload.input]: payload.value,
+          [formAction.payload.input]: formAction.payload.value,
         };
         const updatedValidities = {
           ...state.inputValidities,
-          [payload.input]: payload.isValid,
+          [formAction.payload.input]: formAction.payload.isValid,
         };
         let updatedFormIsValid = true;
         for (const key in updatedValidities) {
@@ -49,7 +50,6 @@ const createFormReducer =
     }
   };
 
-// TODO: typesafe generics implementation of useForm
 const useForm = <
   T extends {
     [key: string]: string;
@@ -62,7 +62,7 @@ const useForm = <
       ...form,
     },
     inputValidities: Object.keys(form).reduce((acc, curr) => {
-      return { ...acc, [curr]: form ? true : false };
+      return { ...acc, [curr]: form[curr] ? true : false };
     }, {} as Record<keyof T, boolean>),
     formIsValid: false,
   });

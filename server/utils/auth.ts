@@ -3,7 +3,7 @@ import { sign, verify } from "jsonwebtoken";
 import { RefreshTokenPayload } from "../types/token";
 import { INVALID_REFRESH_TOKEN } from "./constants";
 
-const ACCESS_EXPIRE_TIME = "1m"; // in minutes
+const ACCESS_EXPIRE_TIME = "30m"; // in minutes
 const REFRESH_EXPIRE_TIME = "7d"; // in days
 
 export const createTokens = (userId: string, count: number) => {

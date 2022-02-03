@@ -1,13 +1,16 @@
-export type AuthRequest = {
+export type SigninRequest = {
   email: string;
   password: string;
 };
+
+export type SignupRequest = {
+  username: string;
+} & SigninRequest;
 
 export type AuthData = {
   accessToken: string;
   refreshToken: string;
   userId: string;
-  expires: number;
 };
 
 export type AuthResponse = {
