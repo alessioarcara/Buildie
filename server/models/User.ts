@@ -4,14 +4,14 @@ import bcrypt from "bcryptjs";
 
 const HASH_ROUNDS = 12;
 
-@pre<User>("save", function (next) {
-  const user = this;
-  if (!user.isModified("password")) return next();
-  bcrypt.hash(user.password, HASH_ROUNDS, (err, encryptedPassword) => {
-    if (err) return next(err);
-    user.password = encryptedPassword;
-  });
-  return next();
+@pre<User>("save", async function (next) {
+  if (!this.isModified("password")) return next();
+  try {
+    this.password = await bcrypt.hash(this.password, HASH_ROUNDS);
+    return next();
+  } catch (error) {
+    return next(error as Error);
+  }
 })
 @ObjectType({ description: "The user model" })
 export class User {

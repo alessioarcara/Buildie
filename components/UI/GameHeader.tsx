@@ -1,6 +1,12 @@
 import React from "react";
-import { Dimensions, StyleSheet, View } from "react-native";
-import GameInfo from "./GameInfo";
+import {
+  Dimensions,
+  StyleSheet,
+  View,
+  StatusBar,
+  Platform,
+} from "react-native";
+import GameStatistic from "./GameStatistic";
 
 type GameHeaderProps = {
   speed: number;
@@ -8,16 +14,26 @@ type GameHeaderProps = {
   score: number;
 };
 
-const GameHeader = (props: GameHeaderProps) => {
+const GameHeader = ({ speed, lines, score }: GameHeaderProps) => {
   return (
-    <View style={styles.gameHeader}>
-      {Object.keys(props).map((prop) => (
-        <GameInfo
-          key={prop}
-          title={prop.charAt(0).toUpperCase() + prop.slice(1)}
-          info={props[prop]}
+    <View style={styles.gameHeaderContainer}>
+      <View style={styles.gameHeader}>
+        <GameStatistic
+          title="Level"
+          statistic={speed}
+          icon={require("../../assets/images/lvl.png")}
         />
-      ))}
+        <GameStatistic
+          title="Lines"
+          statistic={lines}
+          icon={require("../../assets/images/blocks.png")}
+        />
+        <GameStatistic
+          title="Score"
+          statistic={score}
+          icon={require("../../assets/images/trophy.png")}
+        />
+      </View>
     </View>
   );
 };
@@ -25,12 +41,16 @@ const GameHeader = (props: GameHeaderProps) => {
 export default GameHeader;
 
 const styles = StyleSheet.create({
+  gameHeaderContainer: {
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
+    backgroundColor: "#000",
+  },
   gameHeader: {
     flexDirection: "row",
-    height: Dimensions.get("window").height * 0.13,
+    height: Dimensions.get("window").height * 0.14,
     width: "100%",
     borderBottomWidth: 2,
-    borderColor: "#bbb",
+    borderColor: "grey",
     backgroundColor: "#000",
   },
 });

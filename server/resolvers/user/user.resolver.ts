@@ -9,6 +9,7 @@ import {
   INVALID_REFRESH_TOKEN,
   EMAIL_NOT_FOUND,
   INVALID_PASSWORD,
+  EMAIL_EXISTS,
 } from "../../utils/constants";
 
 @Resolver()
@@ -17,6 +18,9 @@ export default class UserResolver {
   async signup(
     @Arg("input") input: AuthenticateInput
   ): Promise<AuthenticatePayload> {
+    const existingUser = await UserModel.findOne({ email: input.email }).lean();
+    if (existingUser) return { problem: EMAIL_EXISTS };
+
     const user = await UserModel.create(input);
 
     return {
@@ -73,6 +77,7 @@ export default class UserResolver {
   @Query(() => String)
   @UseMiddleware(isAuth)
   async helloWorld() {
+    console.log("EH BEH ECCOMI");
     return "Ciao Mondo";
   }
 }

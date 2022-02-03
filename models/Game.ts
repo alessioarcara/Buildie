@@ -23,12 +23,12 @@ class Game {
     return this._piecePool.currPiece;
   }
 
-  get nextPiece() {
-    return this._piecePool.nextPiece?.shape;
-  }
-
   get heldPiece() {
     return this._piecePool.heldPiece?.shape;
+  }
+
+  get nextPiece() {
+    return this._piecePool.nextPiece?.shape;
   }
 
   get speed() {
@@ -52,7 +52,7 @@ class Game {
   }
 
   update() {
-    this._piecePool.update();
+    !this.gameOver && this._piecePool.update();
   }
 }
 

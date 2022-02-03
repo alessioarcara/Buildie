@@ -1,17 +1,20 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { HomeScreen, ProfileScreen } from "@screens";
-import { Ionicons } from "@expo/vector-icons";
+import { HomeScreen, ProfileScreen, AuthScreen } from "@screens";
+import { FontAwesome } from "@expo/vector-icons";
 import { BlurView } from "expo-blur";
+import { useAppSelector } from "@store/hooks";
 
 export type TabNavigatorParams = {
   Home: undefined;
   Profile: undefined;
+  Login: undefined;
 };
 
 const Tab = createBottomTabNavigator<TabNavigatorParams>();
 
 const RootNavigator = () => {
+  const isSignedIn = useAppSelector((state) => !!state.auth.accessToken);
   return (
     <Tab.Navigator
       screenOptions={{
@@ -21,10 +24,14 @@ const RootNavigator = () => {
           borderTopWidth: 0,
         },
         tabBarLabelStyle: {
-          fontSize: 14,
+          fontSize: 16,
+          fontFamily: "dogbyte",
+          paddingBottom: 5,
         },
+        tabBarActiveTintColor: "orange",
+        tabBarInactiveTintColor: "#bbb",
         tabBarBackground: () => (
-          <BlurView tint="dark" intensity={60} style={{ flex: 1 }} />
+          <BlurView tint="dark" intensity={40} style={{ flex: 1 }} />
         ),
       }}
     >
@@ -32,20 +39,32 @@ const RootNavigator = () => {
         name="Home"
         component={HomeScreen}
         options={{
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="ios-home-outline" size={25} color={color} />
+          tabBarIcon: ({ size, color }) => (
+            <FontAwesome name="home" size={size} color={color} />
           ),
         }}
       />
-      <Tab.Screen
-        name="Profile"
-        component={ProfileScreen}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="ios-person-outline" size={25} color={color} />
-          ),
-        }}
-      />
+      {isSignedIn ? (
+        <Tab.Screen
+          name="Profile"
+          component={ProfileScreen}
+          options={{
+            tabBarIcon: ({ size, color }) => (
+              <FontAwesome name="user" size={size} color={color} />
+            ),
+          }}
+        />
+      ) : (
+        <Tab.Screen
+          name="Login"
+          component={AuthScreen}
+          options={{
+            tabBarIcon: ({ size, color }) => (
+              <FontAwesome name="sign-in" size={size} color={color} />
+            ),
+          }}
+        />
+      )}
     </Tab.Navigator>
   );
 };

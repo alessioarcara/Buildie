@@ -1,13 +1,13 @@
-import { GradientBackground, MenuButton } from "@components";
-import { StackNavigatorParams } from "@config/AppNavigator";
+import React from "react";
+import { DefaultText, GradientBackground, DefaultButton } from "@components";
+import { StackNavigatorParams } from "@config/GameNavigator";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
-import React from "react";
-import { View, Text } from "react-native";
-import styles from "./HomeScreen.styles";
+import { View, Text, StyleSheet } from "react-native";
 import { squareColors } from "@constants/Colors";
+import { useAppSelector } from "@store/hooks";
 
-const menuOptions = ["Giocatore Singolo", "Multigiocatore", "Impostazioni"];
+const menuOptions = ["Singleplayer", "Multiplayer", "Settings"];
 
 type HomeProps = {
   navigation: NativeStackNavigationProp<StackNavigatorParams, "Root">;
@@ -17,10 +17,12 @@ const logo = "Buildie";
 
 const Home = ({ navigation }: HomeProps) => {
   const tabBarHeight = useBottomTabBarHeight();
+  const isSignedIn = useAppSelector((state) => !!state.auth.accessToken);
+
   return (
     <GradientBackground>
       <View style={{ marginBottom: tabBarHeight, ...styles.list }}>
-        <Text style={styles.logo}>
+        <DefaultText style={styles.logo}>
           {[...logo].map((char, idx) => (
             <Text
               style={{ color: squareColors[idx + 1] }}
@@ -29,21 +31,41 @@ const Home = ({ navigation }: HomeProps) => {
               {char}
             </Text>
           ))}
-        </Text>
+        </DefaultText>
         {menuOptions.map((menuOption) => (
-          <MenuButton
+          <DefaultButton
             key={menuOption}
-            // style={styles.listItem}
+            style={styles.homeButton}
+            disabled={menuOption === "Multiplayer" && !isSignedIn}
             onPress={() => {
               navigation.navigate("Singleplayer", { gameId: "asd123" });
             }}
           >
             {menuOption}
-          </MenuButton>
+          </DefaultButton>
         ))}
       </View>
     </GradientBackground>
   );
 };
+
+const styles = StyleSheet.create({
+  logo: {
+    fontSize: 100,
+    color: "white",
+  },
+  list: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "space-evenly",
+  },
+  homeButton: {
+    backgroundColor: "#192f6a",
+    minWidth: 250,
+    shadowRadius: 0,
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 1,
+  },
+});
 
 export default Home;

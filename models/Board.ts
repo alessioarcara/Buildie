@@ -36,7 +36,10 @@ class Board {
     for (let yFwIndex = pyIndex; yFwIndex < Board.h - 1; yFwIndex += 1) {
       let isFilled = true;
       for (let xIndex = 0; xIndex < Board.w; xIndex += 1) {
-        if (this._board[yFwIndex * Board.w + xIndex] === 0) {
+        if (
+          this._board[yFwIndex * Board.w + xIndex] === 0 ||
+          this._board[yFwIndex * Board.w + xIndex] === undefined
+        ) {
           isFilled = false;
           break;
         }

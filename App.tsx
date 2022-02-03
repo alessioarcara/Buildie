@@ -1,11 +1,15 @@
 import React from "react";
+import { Provider } from "react-redux";
+import store from "./store";
 import AppNavigator from "@config/AppNavigator";
 import { AppBootstrap } from "@components";
 
 export default function App() {
   return (
-    <AppBootstrap>
-      <AppNavigator />
-    </AppBootstrap>
+    <Provider store={store}>
+      <AppBootstrap>
+        <AppNavigator />
+      </AppBootstrap>
+    </Provider>
   );
 }

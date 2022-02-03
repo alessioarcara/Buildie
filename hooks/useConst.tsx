@@ -1,6 +1,6 @@
 import { useRef } from "react";
 
-export const useConst = <T,>(initialvalue: T | (() => T)): T => {
+const useConst = <T,>(initialvalue: T | (() => T)): T => {
   const ref = useRef<{ value: T }>();
 
   if (ref.current === undefined) {
@@ -14,3 +14,5 @@ export const useConst = <T,>(initialvalue: T | (() => T)): T => {
 
   return ref.current.value;
 };
+
+export default useConst;

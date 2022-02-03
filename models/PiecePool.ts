@@ -6,19 +6,20 @@ import Shape from "./Shape";
 class PiecePool {
   private _pool: Piece[];
   private _currPiece: Piece | null;
-  private _nextPiece: Piece | null;
   private _heldPiece: Piece | null;
+  private _nextPiece: Piece;
   private alreadyHeld = false;
   doesNextPieceFit = true;
 
   constructor(shapes: Shape[], board: Board) {
     this._pool = new Array(shapes.length);
     this._currPiece = null;
-    this._nextPiece = null;
     this._heldPiece = null;
 
     for (let sIndex = 0; sIndex < shapes.length; sIndex += 1)
       this._pool[sIndex] = shapes[sIndex].newPiece(board);
+
+    this._nextPiece = this.randomPiece();
   }
 
   get currPiece() {
@@ -45,15 +46,18 @@ class PiecePool {
     this._heldPiece = currPiece;
   }
 
+  randomPiece() {
+    const rndIndex = Math.floor(Math.random() * this._pool.length);
+    return this._pool[rndIndex];
+  }
+
   private newPiece() {
     this.currPiece?.reset();
     this.alreadyHeld = false;
-    // random piece
-    this.currPiece = this.nextPiece;
-    const rndIndex = Math.floor(Math.random() * this._pool.length);
-    this.doesNextPieceFit = !this._pool[rndIndex].collides();
-    // this.currPiece = this.doesNextPieceFit ? this._pool[rndIndex] : null;
-    this.nextPiece = this.doesNextPieceFit ? this._pool[rndIndex] : null;
+
+    this.doesNextPieceFit = !this.nextPiece?.collides();
+    this.currPiece = this.doesNextPieceFit ? this.nextPiece : null;
+    if (this.doesNextPieceFit) this.nextPiece = this.randomPiece();
   }
 
   private holdPiece() {

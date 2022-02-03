@@ -4,3 +4,5 @@ export const INVALID_ACCESS_TOKEN =
 export const EMAIL_NOT_FOUND =
   "There is no user record corresponding to this identifier";
 export const INVALID_PASSWORD = "The password is invalid";
+export const EMAIL_EXISTS =
+  "The email address is already in use by another account.";
