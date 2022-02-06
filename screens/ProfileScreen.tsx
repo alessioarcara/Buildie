@@ -1,6 +1,7 @@
-import { DefaultButton, DefaultText, GradientBackground } from "@components";
+import { DefaultButton, GradientBackground } from "@components";
+import { appColors } from "@constants/Colors";
 import defaultStyles from "@constants/defaultStyles";
-import { invalidate } from "@store/authThunk";
+import { invalidate } from "@store/authThunks";
 import { useAppDispatch } from "@store/hooks";
 import React from "react";
 import { StyleSheet, View } from "react-native";
@@ -10,7 +11,10 @@ const Profile = () => {
   return (
     <GradientBackground>
       <View style={defaultStyles.centered}>
-        <DefaultButton onPress={() => dispatch(invalidate())}>
+        <DefaultButton
+          style={styles.logoutButton}
+          onPress={() => dispatch(invalidate())}
+        >
           Logout
         </DefaultButton>
       </View>
@@ -20,4 +24,8 @@ const Profile = () => {
 
 export default Profile;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  logoutButton: {
+    backgroundColor: appColors.error,
+  },
+});

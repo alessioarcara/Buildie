@@ -1,3 +1,4 @@
+import { appColors } from "@constants/Colors";
 import { LinearGradient } from "expo-linear-gradient";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
@@ -13,7 +14,11 @@ const GradientBackground = ({ children }: GradientBackgroundProps) => {
       <StatusBar style="light" />
       <LinearGradient
         style={styles.background}
-        colors={["#4c669f", "#3b5998", "#192f6a"]}
+        colors={[
+          appColors.primaryLight,
+          appColors.primary,
+          appColors.primaryDark,
+        ]}
       />
       {children}
     </View>

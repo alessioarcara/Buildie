@@ -5,21 +5,34 @@ import Shape from "./Shape";
 
 class PiecePool {
   private _pool: Piece[];
-  private _currPiece: Piece | null;
-  private _heldPiece: Piece | null;
-  private _nextPiece: Piece;
+  private _currPiece;
+  private _heldPiece;
+  private _nextPiece;
   private alreadyHeld = false;
   doesNextPieceFit = true;
 
-  constructor(shapes: Shape[], board: Board) {
+  constructor(
+    shapes: Shape[],
+    board: Board,
+    initialIndexCurrPiece?: number,
+    initialIndexHeldPiece?: number,
+    initialIndexNextPiece?: number
+  ) {
     this._pool = new Array(shapes.length);
-    this._currPiece = null;
-    this._heldPiece = null;
 
     for (let sIndex = 0; sIndex < shapes.length; sIndex += 1)
       this._pool[sIndex] = shapes[sIndex].newPiece(board);
 
-    this._nextPiece = this.randomPiece();
+    // arrays are zero-indexed
+    this._currPiece = initialIndexCurrPiece
+      ? this._pool[initialIndexCurrPiece - 1]
+      : null;
+    this._heldPiece = initialIndexHeldPiece
+      ? this._pool[initialIndexHeldPiece - 1]
+      : null;
+    this._nextPiece = initialIndexNextPiece
+      ? this._pool[initialIndexNextPiece - 1]
+      : this.randomPiece();
   }
 
   get currPiece() {
@@ -62,8 +75,8 @@ class PiecePool {
 
   private holdPiece() {
     if (this.currPiece !== null && !this.alreadyHeld) {
+      this.currPiece.reset();
       if (this.heldPiece === null) {
-        this.currPiece.reset();
         this.heldPiece = this.currPiece;
         this.newPiece();
       } else {
@@ -89,6 +102,13 @@ class PiecePool {
     this.currPiece && !this.currPiece.collided
       ? this.currPiece?.moveDown()
       : this.newPiece();
+  }
+
+  reset() {
+    this.currPiece?.reset();
+    this.currPiece = null;
+    this.heldPiece = null;
+    this.nextPiece = this.randomPiece();
   }
 }
 

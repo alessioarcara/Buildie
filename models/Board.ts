@@ -2,31 +2,52 @@ import Points from "@constants/Points";
 
 class Board {
   private _board;
-  private _nlines = 0;
-  speed;
-  score = 0;
+  private _lines;
+  private _speed;
+  private _initialSpeed;
+  private _score;
   static w = 12;
   static h = 24;
 
-  constructor(initialSpeed: number) {
-    this.speed = initialSpeed;
-    this._board = new Uint8Array(Board.h * Board.w);
-
-    for (let yIndex = 0; yIndex < Board.h; yIndex += 1)
-      for (let xIndex = 0; xIndex < Board.w; xIndex += 1) {
-        this._board[yIndex * Board.w + xIndex] =
-          xIndex === 0 || xIndex === Board.w - 1 || yIndex === Board.h - 1
-            ? 9
-            : 0;
-      }
+  constructor(
+    initialBoard?: Uint8Array,
+    initialSpeed = 1,
+    initialLines = 0,
+    initialScore = 0
+  ) {
+    this._initialSpeed = initialSpeed;
+    this._speed = initialSpeed;
+    this._lines = initialLines;
+    this._score = initialScore;
+    this._board = initialBoard ?? this.init();
   }
 
   get board() {
     return this._board;
   }
 
-  get nlines() {
-    return this._nlines;
+  get lines() {
+    return this._lines;
+  }
+
+  get speed() {
+    return this._speed;
+  }
+
+  get score() {
+    return this._score;
+  }
+
+  init() {
+    const board = new Uint8Array(Board.h * Board.w);
+    for (let yIndex = 0; yIndex < Board.h; yIndex += 1)
+      for (let xIndex = 0; xIndex < Board.w; xIndex += 1) {
+        board[yIndex * Board.w + xIndex] =
+          xIndex === 0 || xIndex === Board.w - 1 || yIndex === Board.h - 1
+            ? 9
+            : 0;
+      }
+    return board;
   }
 
   // update method
@@ -53,13 +74,20 @@ class Board {
               this.board[(yBwIndex - 1) * Board.w + xIndex];
           }
         clearedLines++;
-        this._nlines++;
+        this._lines++;
       }
     }
     // scoring
-    this.score += this.speed * clearedLines * Points[clearedLines];
+    this._score += this.speed * clearedLines * Points[clearedLines];
     // speed
-    this.speed = Math.floor((this.nlines + 10) / 10);
+    this._speed = Math.floor((this.lines + 10) / 10) + (this._initialSpeed - 1);
+  }
+
+  reset() {
+    this._score = 0;
+    this._lines = 0;
+    this._speed = 1;
+    this._board = this.init();
   }
 }
 

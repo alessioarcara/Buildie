@@ -2,6 +2,7 @@ import { UserModel } from "../../models/User";
 import {
   Arg,
   Ctx,
+  Int,
   Mutation,
   Query,
   Resolver,
@@ -14,15 +15,17 @@ import { USER_NOT_FOUND } from "../../utils/constants";
 
 @Resolver()
 export default class LeaderboardResolver {
-  @Query(() => [Score])
+  @Query(() => [Score], { nullable: true })
   async scores(): Promise<Score[]> {
-    return await UserModel.find().sort({ score: -1 }).lean();
+    return await UserModel.find({ score: { $gt: 0 } })
+      .sort({ score: -1 })
+      .lean();
   }
 
   @Mutation(() => SubmitScorePayload)
   @UseMiddleware(isAuth)
   async submitScore(
-    @Arg("score") score: number,
+    @Arg("score", () => Int) score: number,
     @Ctx() ctx: Context
   ): Promise<SubmitScorePayload> {
     const user = await UserModel.findByIdAndUpdate(
@@ -32,7 +35,7 @@ export default class LeaderboardResolver {
     );
 
     return user
-      ? { data: { username: user.username, score: user.score } }
+      ? { data: { _id: user._id, username: user.username, score: user.score } }
       : { problem: USER_NOT_FOUND };
   }
 }

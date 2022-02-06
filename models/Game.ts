@@ -2,16 +2,33 @@ import ShapeFactory from "./ShapeFactory";
 import shapes from "@constants/Shapes.json";
 import Board from "./Board";
 import PiecePool from "./PiecePool";
+import { InitialGameState } from "../types/Game";
 
 class Game {
   private _piecePool;
   private _board;
 
-  constructor(initialSpeed = 1) {
-    this._board = new Board(initialSpeed);
+  constructor({
+    initialBoard,
+    initialIndexCurrPiece,
+    initialIndexHeldPiece,
+    initialIndexNextPiece,
+    initialSpeed,
+    initialLines,
+    initialScore,
+  }: InitialGameState) {
+    this._board = new Board(
+      initialBoard,
+      initialSpeed,
+      initialLines,
+      initialScore
+    );
     this._piecePool = new PiecePool(
       new ShapeFactory(shapes).shapeTypes,
-      this._board
+      this._board,
+      initialIndexCurrPiece,
+      initialIndexHeldPiece,
+      initialIndexNextPiece
     );
   }
 
@@ -35,8 +52,8 @@ class Game {
     return this._board.speed;
   }
 
-  get nlines() {
-    return this._board.nlines;
+  get lines() {
+    return this._board.lines;
   }
 
   get score() {
@@ -53,6 +70,11 @@ class Game {
 
   update() {
     !this.gameOver && this._piecePool.update();
+  }
+
+  reset() {
+    this._board.reset();
+    this._piecePool.reset();
   }
 }
 

@@ -1,10 +1,11 @@
-import { useRef, useMemo, useLayoutEffect } from "react";
+import { useRef, useMemo, useCallback, useLayoutEffect } from "react";
 
 const useGameLoop = (speed: number, update: () => void, draw: () => void) => {
   const rafRef = useRef<number | null>(null);
   const ms_per_update = useMemo(() => 1000 / speed, [speed]);
   const prevTimeRef = useRef(performance.now());
   const lagRef = useRef(0);
+  const started = useRef(false);
 
   const gameLoop = (time: number) => {
     const elapsedTimeBetweenFrames = time - prevTimeRef.current;
@@ -29,20 +30,22 @@ const useGameLoop = (speed: number, update: () => void, draw: () => void) => {
     rafRef.current = requestAnimationFrame(gameLoop);
   };
 
-  const start = () => {
-    rafRef.current = requestAnimationFrame(gameLoop);
-  };
+  const start = useCallback(() => {
+    if (!started.current) {
+      started.current = true;
+      // render initial game state
+      // draw();
+      // reset timers
+      prevTimeRef.current = performance.now();
+      lagRef.current = 0;
+      rafRef.current = requestAnimationFrame(gameLoop);
+    }
+  }, [started.current]);
 
-  const stop = () => {
+  const stop = useCallback(() => {
+    started.current = false;
     rafRef.current && cancelAnimationFrame(rafRef.current);
-  };
-
-  useLayoutEffect(() => {
-    rafRef.current = requestAnimationFrame(gameLoop);
-    return () => {
-      rafRef.current && cancelAnimationFrame(rafRef.current);
-    };
-  }, [speed]);
+  }, []);
 
   return { start, stop };
 };

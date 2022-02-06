@@ -1,8 +1,7 @@
 import { useCallback, useReducer } from "react";
 
 export enum FormActionType {
-  FORM_UPDATE = "FORM_UPDATE",
-  FORM_RESET = "FORM_RESET",
+  FORM_CHANGE = "FORM_CHANGE",
 }
 
 type FormState<T> = {
@@ -16,7 +15,7 @@ type FormState<T> = {
 };
 
 type FormAction = {
-  type: FormActionType.FORM_UPDATE;
+  type: FormActionType.FORM_CHANGE;
   payload: { value: string; isValid: boolean; input: string };
 };
 
@@ -24,7 +23,7 @@ const createFormReducer =
   <T,>() =>
   (state: FormState<T>, formAction: FormAction): FormState<T> => {
     switch (formAction.type) {
-      case FormActionType.FORM_UPDATE:
+      case FormActionType.FORM_CHANGE:
         const updatedValues = {
           ...state.inputValues,
           [formAction.payload.input]: formAction.payload.value,
@@ -70,7 +69,7 @@ const useForm = <
   const valueChangeHandler = useCallback(
     (input: string, value: string, isValid: boolean) => {
       dispatchFormState({
-        type: FormActionType.FORM_UPDATE,
+        type: FormActionType.FORM_CHANGE,
         payload: { value, isValid, input },
       });
     },

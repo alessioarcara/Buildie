@@ -1,4 +1,5 @@
 export const squareColors: { [key: number]: string } = {
+  "-1": "transparent",
   0: "#000000",
   1: "#66CCFF",
   2: "#FFD500",
@@ -10,4 +11,12 @@ export const squareColors: { [key: number]: string } = {
   9: "#808080",
 };
 
-export enum appColors {}
+export enum appColors {
+  black = "#121212EE",
+  white = "#eee",
+  primary = "#3b5998",
+  primaryLight = "#4c669f",
+  primaryDark = "#192f6a",
+  secondary = "orange",
+  error = "#B00020",
+}

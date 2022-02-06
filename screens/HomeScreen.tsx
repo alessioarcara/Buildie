@@ -1,13 +1,13 @@
 import React from "react";
-import { DefaultText, GradientBackground, DefaultButton } from "@components";
+import { DefaultText, AnimatedBackground, DefaultButton } from "@components";
 import { StackNavigatorParams } from "@config/GameNavigator";
 import { useBottomTabBarHeight } from "@react-navigation/bottom-tabs";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { View, Text, StyleSheet } from "react-native";
-import { squareColors } from "@constants/Colors";
+import { appColors, squareColors } from "@constants/Colors";
 import { useAppSelector } from "@store/hooks";
 
-const menuOptions = ["Singleplayer", "Resume", "Multiplayer", "Settings"];
+const menuOptions = ["Singleplayer", "Leaderboard", "Settings"];
 
 type HomeProps = {
   navigation: NativeStackNavigationProp<StackNavigatorParams, "Root">;
@@ -17,10 +17,11 @@ const logo = "Buildie";
 
 const Home = ({ navigation }: HomeProps) => {
   const tabBarHeight = useBottomTabBarHeight();
-  const isSignedIn = useAppSelector((state) => !!state.auth.accessToken);
+  const isSignedIn = false;
+  const activeGame = useAppSelector((state) => !!state.game);
 
   return (
-    <GradientBackground>
+    <AnimatedBackground>
       <View style={{ marginBottom: tabBarHeight, ...styles.list }}>
         <DefaultText style={styles.logo}>
           {[...logo].map((char, idx) => (
@@ -32,25 +33,22 @@ const Home = ({ navigation }: HomeProps) => {
             </Text>
           ))}
         </DefaultText>
-        {menuOptions.reduce<JSX.Element[]>((acc, menuOption) => {
-          return menuOption !== "Resume"
-            ? [
-                ...acc,
-                <DefaultButton
-                  key={menuOption}
-                  style={styles.homeButton}
-                  disabled={menuOption === "Multiplayer" && !isSignedIn}
-                  onPress={() => {
-                    navigation.navigate("Singleplayer", { gameId: "asd123" });
-                  }}
-                >
-                  {menuOption}
-                </DefaultButton>,
-              ]
-            : acc;
-        }, [])}
+        {menuOptions.map((menuOption: any) => (
+          <DefaultButton
+            key={menuOption}
+            style={styles.homeButton}
+            disabled={menuOption === "Multiplayer" && !isSignedIn}
+            onPress={() => {
+              navigation.navigate(menuOption);
+            }}
+          >
+            {menuOption === "Singleplayer" && activeGame
+              ? "Resume"
+              : menuOption}
+          </DefaultButton>
+        ))}
       </View>
-    </GradientBackground>
+    </AnimatedBackground>
   );
 };
 
@@ -65,7 +63,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
   },
   homeButton: {
-    backgroundColor: "#192f6a",
+    backgroundColor: appColors.primaryDark,
     minWidth: 250,
     shadowRadius: 0,
     shadowOffset: { width: 0, height: 6 },

@@ -1,27 +1,51 @@
 import { Dimensions, StyleSheet, View } from "react-native";
-import React, { useMemo } from "react";
+import React from "react";
 import Cell from "./Cell";
 import DefaultText from "../UI/DefaultText";
+import { appColors } from "@constants/Colors";
 
 type PieceProps = {
-  title: string;
+  title?: string;
   piece?: string;
+  transparentBackground?: boolean;
 };
 
-const pieceWidth = Dimensions.get("window").width * 0.15;
+export const pieceWidth = Dimensions.get("window").width * 0.15;
 
-const Piece = ({ title, piece }: PieceProps) => {
+const Piece = ({ title, piece, transparentBackground }: PieceProps) => {
   const currHeldPiece =
     piece &&
     [...piece].map((type, idx) => (
-      <Cell key={`h_${idx}`} type={+type} width={pieceWidth / 4} />
+      <Cell
+        key={`h_${idx}`}
+        type={+type === 0 && transparentBackground ? -1 : +type}
+        width={pieceWidth / 4}
+        border={transparentBackground}
+      />
     ));
 
   return (
     <>
       <DefaultText style={styles.title}>{title}</DefaultText>
-      <View style={styles.pieceContainer}>
-        <View style={styles.piece}>{currHeldPiece}</View>
+      <View
+        style={{
+          ...styles.pieceContainer,
+          ...{
+            borderColor: transparentBackground ? "" : "grey",
+            borderWidth: transparentBackground ? 0 : 2,
+          },
+        }}
+      >
+        <View
+          style={{
+            ...styles.piece,
+            ...{
+              backgroundColor: transparentBackground ? "" : "#000",
+            },
+          }}
+        >
+          {currHeldPiece}
+        </View>
       </View>
     </>
   );
@@ -31,8 +55,6 @@ export default React.memo(Piece);
 
 const styles = StyleSheet.create({
   pieceContainer: {
-    borderColor: "grey",
-    borderWidth: 2,
     marginBottom: 10,
   },
   title: {
@@ -41,7 +63,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   piece: {
-    backgroundColor: "#000",
     width: pieceWidth,
     height: pieceWidth,
     flexDirection: "row",

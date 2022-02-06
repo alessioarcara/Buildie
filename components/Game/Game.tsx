@@ -1,32 +1,28 @@
-import React, { useCallback, useEffect, useLayoutEffect, useRef } from "react";
-import {
-  StyleSheet,
-  View,
-  Image,
-  TouchableOpacity,
-  AppState,
-} from "react-native";
-import Board from "./Board";
-import useConst from "@hooks/useConst";
+import React, { useCallback, useEffect, useLayoutEffect } from "react";
+import { StyleSheet, View } from "react-native";
 import GameClass from "@models/Game";
+import Board from "./Board";
 import useGameLoop from "@hooks/useGameLoop";
 import Joystick from "./Joystick";
 import useForceUpdate from "@hooks/useForceUpdate";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import GameHeader from "../UI/GameHeader";
 import Piece from "./Piece";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorParams } from "@config/GameNavigator";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import IconButton from "../UI/IconButton";
+import useSounds from "@hooks/useSounds";
 
-const Game = () => {
+type GameProps = {
+  game: GameClass;
+};
+
+const Game = ({ game }: GameProps) => {
   const navigation =
     useNavigation<
       NativeStackNavigationProp<StackNavigatorParams, "Singleplayer">
     >();
-  const appState = useRef(AppState.currentState);
-  const game = useConst(() => new GameClass());
-
+  const [playMusic, stopMusic, { isLoading, didFinish }] = useSounds();
   const draw = useForceUpdate();
 
   const handleInput = useCallback((keyCode: string) => {
@@ -40,42 +36,36 @@ const Game = () => {
 
   const { start, stop } = useGameLoop(game.speed, update, draw);
 
-  const saveGameStateToStorage = () => {
-    AsyncStorage.setItem(
-      "gameState",
-      JSON.stringify({
-        board: game.board,
-        currPiece: game.currPiece,
-        heldPiece: game.heldPiece,
-        nextPiece: game.nextPiece,
-      })
-    );
-  };
-
-  const handleAppStateChange = useCallback((nextAppState) => {
-    if (
-      appState.current === "active" &&
-      nextAppState.match(/inactive|background/)
-    ) {
-      saveGameStateToStorage();
-    }
-    appState.current = nextAppState;
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      start();
+      playMusic(game.speed);
+      return () => {
+        stop();
+        stopMusic();
+      };
+    }, [game.speed])
+  );
 
   useEffect(() => {
-    AppState.addEventListener("change", handleAppStateChange);
-    return () => {
-      AppState.removeEventListener("change", handleAppStateChange);
-    };
-  }, []);
+    if (!isLoading) {
+      playMusic(game.speed);
+    }
+  }, [isLoading, didFinish]);
+
+  useEffect(() => {
+    if (game.gameOver) {
+      navigation.navigate("Gameover");
+    }
+  }, [game.gameOver]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
       header: () => (
-        <GameHeader speed={game.speed} lines={game.nlines} score={game.score} />
+        <GameHeader speed={game.speed} lines={game.lines} score={game.score} />
       ),
     });
-  }, [game.speed, game.nlines, game.score]);
+  }, [game.speed, game.lines, game.score]);
 
   return (
     <View style={styles.gameContainer}>
@@ -84,22 +74,19 @@ const Game = () => {
         <View style={{ alignItems: "center" }}>
           <Piece title="hold" piece={game.heldPiece} />
           <Piece title="next" piece={game.nextPiece} />
-          <TouchableOpacity
-            onPress={() => {
-              stop();
+          <IconButton
+            pressHandler={() => {
               navigation.navigate("Gameover");
             }}
-            style={{
-              width: 50,
-              height: 50,
+            icon={require("../../assets/images/pause.png")}
+          />
+          <IconButton
+            pressHandler={() => {
+              game.reset();
+              // start();
             }}
-          >
-            <Image
-              style={{ width: "100%", height: "100%" }}
-              resizeMode="cover"
-              source={require("../../assets/images/pause.png")}
-            />
-          </TouchableOpacity>
+            icon={require("../../assets/images/replay.png")}
+          />
         </View>
       </View>
       <Joystick handleInput={handleInput} />

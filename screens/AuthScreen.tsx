@@ -12,7 +12,7 @@ import { Card, DefaultButton, GradientBackground, Input } from "@components";
 import { useSigninMutation, useSignupMutation } from "../services/gameApi";
 import useForm from "../hooks/useForm";
 import { useAppDispatch } from "@store/hooks";
-import { authenticate } from "@store/authThunk";
+import { authenticate } from "@store/authThunks";
 import defaultStyles from "@constants/defaultStyles";
 
 const AuthScreen = () => {

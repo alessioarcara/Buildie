@@ -2,6 +2,7 @@ import React, { useRef } from "react";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { FontAwesome } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { useAppSelector } from "@store/hooks";
 
 type JoystickButtonProps = {
   pressHandler: () => void;
@@ -15,11 +16,18 @@ const JoystickButton = ({
   feedback = "light",
 }: JoystickButtonProps) => {
   const timer = useRef<NodeJS.Timeout | null>(null);
+  const isHapticsEnabled = useAppSelector((state) => state.settings.haptics);
 
   const handlePressIn = () => {
-    feedback === "medium"
-      ? Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium)
-      : Haptics.selectionAsync();
+    if (isHapticsEnabled)
+      switch (feedback) {
+        case "medium":
+          Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+          break;
+        default:
+          Haptics.selectionAsync();
+          break;
+      }
     pressHandler();
     timer.current = setTimeout(handlePressIn, 150);
   };

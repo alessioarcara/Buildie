@@ -1,9 +1,9 @@
 {
   "expo": {
     "jsEngine": "hermes",
-    "name": "Progetto-LAM",
-    "slug": "Progetto-LAM",
-    "version": "1.0.0",
+    "name": "Buildie",
+    "slug": "Buildie",
+    "version": "0.0.1",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
@@ -31,5 +31,5 @@
     },
     "sdkVersion": "44.0.0"
   },
-  "name": "progetto-lam"
+  "name": "Buildie"
 }

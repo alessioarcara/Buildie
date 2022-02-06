@@ -10,6 +10,7 @@
       "@constants/*": ["./constants/*"],
       "@store/*": ["./store/*"],
       "@hooks/*": ["./hooks/*"],
+      "@assets/*": ["./assets/*"],
       "@models/*": ["./models/*"],
     }
   }

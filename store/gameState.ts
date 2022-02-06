@@ -1,23 +1,19 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { SerializedGameState } from "../types/Game";
 
-export type GameState = {
-  board: Uint8Array | null;
-  currPiece: string | null;
-  heldPiece: string | null;
-  nextPiece: string | null;
-};
+const initialState: SerializedGameState = {};
 
-const initialState: GameState = {
-  board: null,
-  currPiece: null,
-  heldPiece: null,
-  nextPiece: null,
-};
-
-createSlice({
+const gameSlice = createSlice({
   name: "GameState",
   initialState,
   reducers: {
-    setGameState: (_, { payload }: PayloadAction<GameState>) => payload,
+    setGameState: (_, { payload }: PayloadAction<SerializedGameState>) =>
+      payload,
+    setGameSpeed: (_, { payload }: PayloadAction<number>) => ({
+      initialSpeed: payload,
+    }),
   },
 });
+
+export const { setGameState, setGameSpeed } = gameSlice.actions;
+export default gameSlice.reducer;

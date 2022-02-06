@@ -35,3 +35,26 @@ export const REFRESH_TOKEN_MUTATION = gql`
     }
   }
 `;
+
+export const SCORES_QUERY = gql`
+  query {
+    scores {
+      _id
+      score
+      username
+    }
+  }
+`;
+
+export const SUBMIT_SCORE_MUTATION = gql`
+  mutation ($score: Int!) {
+    submitScore(score: $score) {
+      data {
+        _id
+        score
+        username
+      }
+      problem
+    }
+  }
+`;

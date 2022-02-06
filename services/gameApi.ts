@@ -1,16 +1,19 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import type { BaseQueryFn } from "@reduxjs/toolkit/dist/query/baseQueryTypes";
-import { request, ClientError, gql } from "graphql-request";
+import { request, ClientError } from "graphql-request";
 import { AuthenticatePayload } from "server/resolvers/user/userTypes";
 import {
   REFRESH_TOKEN_MUTATION,
+  SCORES_QUERY,
   SIGNIN_MUTATION,
   SIGNUP_MUTATION,
+  SUBMIT_SCORE_MUTATION,
 } from "./gqlConfig";
-import { SigninRequest, SignupRequest } from "../Types/User";
+import { SigninRequest, SignupRequest } from "../types/User";
 import { RootState } from "@store/index";
 import { graphqlRequestBaseQueryArgs } from "./graphqlBaseQueryTypes";
-import { authenticate, invalidate } from "@store/authThunk";
+import { authenticate, invalidate } from "@store/authThunks";
+import { ScoreData, ScoreResponse } from "types/Score";
 
 const graphqlBaseQueryWithReauth =
   ({
@@ -73,6 +76,7 @@ export const gameApi = createApi({
       return headers;
     },
   }),
+  tagTypes: ["Score"],
   endpoints: (builder) => ({
     signup: builder.mutation<AuthenticatePayload, SignupRequest>({
       query: (user) => ({
@@ -90,7 +94,28 @@ export const gameApi = createApi({
       transformResponse: (response: { signin: AuthenticatePayload }) =>
         response.signin,
     }),
+    scores: builder.query<ScoreData[], void>({
+      query: () => ({
+        body: SCORES_QUERY,
+      }),
+      transformResponse: (response: { scores: ScoreData[] }) => response.scores,
+      providesTags: () => ["Score"],
+    }),
+    submitScore: builder.mutation<ScoreResponse, number>({
+      query: (score) => ({
+        body: SUBMIT_SCORE_MUTATION,
+        variables: { score },
+      }),
+      transformResponse: (response: { submitScore: ScoreResponse }) =>
+        response.submitScore,
+      invalidatesTags: ["Score"],
+    }),
   }),
 });
 
-export const { useSignupMutation, useSigninMutation } = gameApi;
+export const {
+  useSignupMutation,
+  useSigninMutation,
+  useScoresQuery,
+  useSubmitScoreMutation,
+} = gameApi;

@@ -3,7 +3,7 @@ import Shape from "./Shape";
 
 class Piece {
   private _shape;
-  private _board;
+  #board;
   // current position
   x;
   y;
@@ -16,7 +16,7 @@ class Piece {
     this.y = shape.y;
     this.r = shape.r;
     this._shape = shape;
-    this._board = board;
+    this.#board = board;
     this.collided = false;
   }
 
@@ -25,7 +25,7 @@ class Piece {
   }
 
   get board() {
-    return this._board.board;
+    return this.#board.board;
   }
 
   reset() {
@@ -78,7 +78,7 @@ class Piece {
     if (this.collides(this.x, this.y + 1)) {
       this.collided = true;
       this.lock();
-      this._board.clearLines(this.y);
+      this.#board.clearLines(this.y);
       return;
     }
     this.y += 1;

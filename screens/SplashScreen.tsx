@@ -2,25 +2,40 @@ import { ActivityIndicator, View } from "react-native";
 import React, { useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 import { useAppDispatch } from "@store/hooks";
-import { USER_DATA } from "@store/authThunk";
 import { GradientBackground } from "@components";
 import { setDidTryToLogin, login } from "@store/auth";
 import defaultStyles from "@constants/defaultStyles";
-import { AuthData } from "@models/User";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GAME_STATE, SETTINGS, USER_DATA } from "@constants/PersistedData";
+import { setGameState } from "@store/gameState";
+import { setSettings } from "@store/settings";
 
 const SplashScreen = () => {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
+    // authSlice
     (async () => {
       const userData = await SecureStore.getItemAsync(USER_DATA);
       if (!userData) {
         dispatch(setDidTryToLogin());
         return;
       }
-      const transformedData = JSON.parse(userData) as AuthData;
+      dispatch(login(JSON.parse(userData)));
+    })();
 
-      dispatch(login(transformedData));
+    // gameStateSlice
+    (async () => {
+      const gameState = await AsyncStorage.getItem(GAME_STATE);
+      if (!gameState) return;
+      dispatch(setGameState(JSON.parse(gameState)));
+    })();
+
+    // settingsSlice
+    (async () => {
+      const settings = await AsyncStorage.getItem(SETTINGS);
+      if (!settings) return;
+      dispatch(setSettings(JSON.parse(settings)));
     })();
   }, [dispatch]);
 

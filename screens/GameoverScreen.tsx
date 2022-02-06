@@ -5,12 +5,14 @@ import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorParams } from "@config/GameNavigator";
 import { DefaultText } from "@components";
 import { Card } from "@components";
+import { useSubmitScoreMutation } from "../services/gameApi";
 
 type GameoverScreenProps = {
   navigation: NativeStackNavigationProp<StackNavigatorParams, "Gameover">;
 };
 
 const GameoverScreen = ({ navigation }: GameoverScreenProps) => {
+  const [submitScore] = useSubmitScoreMutation();
   return (
     <BlurView style={{ flex: 1 }} intensity={20}>
       <Pressable
@@ -37,7 +39,8 @@ const styles = StyleSheet.create({
     width: "70%",
     height: "30%",
     backgroundColor: "#121212EE",
-    justifyContent: "center",
+    justifyContent: "space-between",
+    padding: 30,
     alignItems: "center",
     borderRadius: 30,
   },
