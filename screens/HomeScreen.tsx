@@ -7,7 +7,7 @@ import { View, Text, StyleSheet } from "react-native";
 import { appColors, squareColors } from "@constants/Colors";
 import { useAppSelector } from "@store/hooks";
 
-const menuOptions = ["Singleplayer", "Leaderboard", "Settings"];
+const menuOptions = ["Singleplayer", "Leaderboard", "Multiplayer", "Settings"];
 
 type HomeProps = {
   navigation: NativeStackNavigationProp<StackNavigatorParams, "Root">;
@@ -17,7 +17,7 @@ const logo = "Buildie";
 
 const Home = ({ navigation }: HomeProps) => {
   const tabBarHeight = useBottomTabBarHeight();
-  const isSignedIn = false;
+  const isSignedIn = useAppSelector((state) => !!state.auth.accessToken);
   const activeGame = useAppSelector((state) => !!state.game);
 
   return (

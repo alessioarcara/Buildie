@@ -2,6 +2,7 @@ import { AnyAction, configureStore, ThunkAction } from "@reduxjs/toolkit";
 import authSlice from "./auth";
 import gameSlice from "./gameState";
 import settingsSlice from "./settings";
+import scoresSlice from "./scores";
 import { gameApi } from "../services/gameApi";
 
 const store = configureStore({
@@ -9,6 +10,7 @@ const store = configureStore({
     auth: authSlice,
     game: gameSlice,
     settings: settingsSlice,
+    scores: scoresSlice,
     [gameApi.reducerPath]: gameApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>

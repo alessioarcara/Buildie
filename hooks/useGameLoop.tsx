@@ -1,4 +1,4 @@
-import { useRef, useMemo, useCallback, useLayoutEffect } from "react";
+import { useRef, useMemo, useCallback } from "react";
 
 const useGameLoop = (speed: number, update: () => void, draw: () => void) => {
   const rafRef = useRef<number | null>(null);
@@ -33,14 +33,12 @@ const useGameLoop = (speed: number, update: () => void, draw: () => void) => {
   const start = useCallback(() => {
     if (!started.current) {
       started.current = true;
-      // render initial game state
-      // draw();
       // reset timers
       prevTimeRef.current = performance.now();
       lagRef.current = 0;
       rafRef.current = requestAnimationFrame(gameLoop);
     }
-  }, [started.current]);
+  }, [started.current, speed]);
 
   const stop = useCallback(() => {
     started.current = false;

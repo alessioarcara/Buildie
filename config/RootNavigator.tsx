@@ -52,6 +52,7 @@ const RootNavigator = () => {
             tabBarIcon: ({ size, color }) => (
               <FontAwesome name="user" size={size} color={color} />
             ),
+            headerShown: false,
           }}
         />
       ) : (

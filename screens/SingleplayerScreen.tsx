@@ -32,7 +32,7 @@ const serializeGameState = (
   };
 };
 
-const Singleplayer = () => {
+const SingleplayerScreen = () => {
   const {
     initialBoard,
     initialIndexCurrPiece,
@@ -117,4 +117,4 @@ const Singleplayer = () => {
   );
 };
 
-export default Singleplayer;
+export default SingleplayerScreen;

@@ -1,6 +1,6 @@
 import { Image, ImageSourcePropType, StyleSheet, View } from "react-native";
 import React from "react";
-import DefaultText from "./DefaultText";
+import DefaultText from "../UI/DefaultText";
 
 type GameStatisticProps = {
   title: string;

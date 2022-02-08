@@ -5,7 +5,7 @@ import DefaultText from "./DefaultText";
 
 type InputProps = {
   id: string;
-  label: string;
+  label?: string;
   error: boolean;
   errorText: string;
   initialValue?: string;

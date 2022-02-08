@@ -6,7 +6,7 @@ import useGameLoop from "@hooks/useGameLoop";
 import Joystick from "./Joystick";
 import useForceUpdate from "@hooks/useForceUpdate";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import GameHeader from "../UI/GameHeader";
+import GameHeader from "./GameHeader";
 import Piece from "./Piece";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorParams } from "@config/GameNavigator";
@@ -36,8 +36,15 @@ const Game = ({ game }: GameProps) => {
 
   const { start, stop } = useGameLoop(game.speed, update, draw);
 
+  const handlePause = useCallback(() => {
+    navigation.navigate("GameModal", { gameOver: false });
+  }, []);
+
   useFocusEffect(
     useCallback(() => {
+      if (game.gameOver) {
+        game.reset();
+      }
       start();
       playMusic(game.speed);
       return () => {
@@ -55,7 +62,7 @@ const Game = ({ game }: GameProps) => {
 
   useEffect(() => {
     if (game.gameOver) {
-      navigation.navigate("Gameover");
+      navigation.navigate("GameModal", { gameOver: true });
     }
   }, [game.gameOver]);
 
@@ -71,21 +78,12 @@ const Game = ({ game }: GameProps) => {
     <View style={styles.gameContainer}>
       <View style={styles.game}>
         <Board currPiece={game.currPiece} board={Array.from(game.board)} />
-        <View style={{ alignItems: "center" }}>
+        <View style={styles.sidePanel}>
           <Piece title="hold" piece={game.heldPiece} />
           <Piece title="next" piece={game.nextPiece} />
           <IconButton
-            pressHandler={() => {
-              navigation.navigate("Gameover");
-            }}
+            pressHandler={handlePause}
             icon={require("../../assets/images/pause.png")}
-          />
-          <IconButton
-            pressHandler={() => {
-              game.reset();
-              // start();
-            }}
-            icon={require("../../assets/images/replay.png")}
           />
         </View>
       </View>
@@ -105,5 +103,8 @@ const styles = StyleSheet.create({
   },
   game: {
     flexDirection: "row",
+  },
+  sidePanel: {
+    alignItems: "center",
   },
 });

@@ -1,9 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import type { BaseQueryFn } from "@reduxjs/toolkit/dist/query/baseQueryTypes";
-import { request, ClientError } from "graphql-request";
 import { AuthenticatePayload } from "server/resolvers/user/userTypes";
 import {
-  REFRESH_TOKEN_MUTATION,
   SCORES_QUERY,
   SIGNIN_MUTATION,
   SIGNUP_MUTATION,
@@ -11,58 +8,8 @@ import {
 } from "./gqlConfig";
 import { SigninRequest, SignupRequest } from "../types/User";
 import { RootState } from "@store/index";
-import { graphqlRequestBaseQueryArgs } from "./graphqlBaseQueryTypes";
-import { authenticate, invalidate } from "@store/authThunks";
 import { ScoreData, ScoreResponse } from "types/Score";
-
-const graphqlBaseQueryWithReauth =
-  ({
-    baseUrl,
-    prepareHeaders = (headers) => headers,
-  }: graphqlRequestBaseQueryArgs): BaseQueryFn<
-    { body: string; variables?: any },
-    unknown,
-    Pick<ClientError, "name" | "message" | "stack">
-  > =>
-  async ({ body, variables }, { getState, dispatch }) => {
-    function headers() {
-      return prepareHeaders(new Headers(), {
-        getState,
-        dispatch,
-      });
-    }
-    try {
-      return { data: await request(baseUrl, body, variables, await headers()) };
-    } catch (error) {
-      if (error instanceof ClientError) {
-        console.log(error);
-        if (
-          error.response.errors?.some(
-            (e) => e.extensions?.code === "UNAUTHENTICATED"
-          )
-        ) {
-          const refreshToken = (getState() as RootState).auth.refreshToken;
-          const refreshResult = await request(baseUrl, REFRESH_TOKEN_MUTATION, {
-            refreshToken,
-          });
-          if (refreshResult.refreshToken) {
-            dispatch(authenticate(refreshResult.refreshToken));
-            return {
-              data: await request(baseUrl, body, variables, await headers()),
-            };
-          } else {
-            dispatch(invalidate());
-          }
-        }
-        const { name, message, stack } = error;
-        return { error: { name, message, stack } };
-      }
-      if (error instanceof Error) {
-        return { error: { name: "Error", message: error.message } };
-      }
-      throw error;
-    }
-  };
+import { graphqlBaseQueryWithReauth } from "./graphqlBaseQuery";
 
 export const gameApi = createApi({
   reducerPath: "gameApi",
@@ -113,9 +60,4 @@ export const gameApi = createApi({
   }),
 });
 
-export const {
-  useSignupMutation,
-  useSigninMutation,
-  useScoresQuery,
-  useSubmitScoreMutation,
-} = gameApi;
+export const { useSignupMutation, useSigninMutation, useScoresQuery } = gameApi;

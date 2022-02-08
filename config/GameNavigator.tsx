@@ -1,21 +1,20 @@
 import React from "react";
 import {
-  GameoverScreen,
-  Settings,
+  GameModalScreen,
   LeaderboardScreen,
   SingleplayerScreen,
+  SettingsScreen,
 } from "@screens";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import RootNavigator from "./RootNavigator";
 import { appColors } from "@constants/Colors";
-import { DefaultText } from "@components";
 
 export type StackNavigatorParams = {
   Root: undefined;
   Singleplayer: undefined;
   Leaderboard: undefined;
   Settings: undefined;
-  Gameover: undefined;
+  GameModal: { gameOver: boolean };
 };
 
 const Stack = createNativeStackNavigator<StackNavigatorParams>();
@@ -30,29 +29,22 @@ const GameNavigator = () => {
       />
       <Stack.Screen name="Singleplayer" component={SingleplayerScreen} />
       <Stack.Screen
-        name="Gameover"
-        component={GameoverScreen}
+        name="GameModal"
+        component={GameModalScreen}
         options={{
           presentation: "transparentModal",
           headerShown: false,
-          animation: "fade",
+          animation: "none",
         }}
       />
-      <Stack.Screen
-        name="Leaderboard"
-        component={LeaderboardScreen}
-        options={{
-          headerStyle: { backgroundColor: appColors.primaryDark },
-          headerTitleStyle: { fontSize: 24 },
-          headerTintColor: appColors.white,
-        }}
-      />
+      <Stack.Screen name="Leaderboard" component={LeaderboardScreen} />
       <Stack.Screen
         name="Settings"
-        component={Settings}
+        component={SettingsScreen}
         options={{
+          headerTitle: "SETTINGS",
           headerStyle: { backgroundColor: appColors.primaryDark },
-          headerTitleStyle: { fontSize: 24 },
+          headerTitleStyle: { fontSize: 24, fontFamily: "dogbyte" },
           headerTintColor: appColors.white,
         }}
       />

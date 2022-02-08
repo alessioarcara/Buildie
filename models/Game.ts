@@ -69,7 +69,7 @@ class Game {
   }
 
   update() {
-    !this.gameOver && this._piecePool.update();
+    this._piecePool.update();
   }
 
   reset() {

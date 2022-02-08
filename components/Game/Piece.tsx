@@ -2,7 +2,6 @@ import { Dimensions, StyleSheet, View } from "react-native";
 import React from "react";
 import Cell from "./Cell";
 import DefaultText from "../UI/DefaultText";
-import { appColors } from "@constants/Colors";
 
 type PieceProps = {
   title?: string;

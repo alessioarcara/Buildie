@@ -1,6 +1,6 @@
 import { Dimensions, StyleSheet, View } from "react-native";
 import React from "react";
-import JoystickButton from "../UI/JoystickButton";
+import JoystickButton from "./JoystickButton";
 import Commands from "@constants/Commands";
 
 type JoystickProps = {

@@ -5,26 +5,37 @@ import {
   TouchableOpacity,
   ViewStyle,
   TouchableOpacityProps,
+  TextStyle,
 } from "react-native";
 import DefaultText from "./DefaultText";
 
 type MainButtonProps = {
   children: React.ReactNode;
   style?: ViewStyle;
+  textStyle?: TextStyle;
 } & TouchableOpacityProps;
 
-const DefaultButton = ({ children, style, ...props }: MainButtonProps) => {
+const DefaultButton = ({
+  children,
+  style,
+  textStyle,
+  ...props
+}: MainButtonProps) => {
   return (
-    <TouchableOpacity activeOpacity={0.6} {...props}>
-      <View style={[styles.button, style]}>
-        <View style={styles.buttonTextContainer}>
-          {props.disabled && (
-            <View style={styles.lineContainer}>
-              <View style={styles.line} />
-            </View>
-          )}
-          <DefaultText style={styles.buttonText}>{children}</DefaultText>
-        </View>
+    <TouchableOpacity
+      style={[styles.button, style]}
+      activeOpacity={0.6}
+      {...props}
+    >
+      <View style={styles.buttonTextContainer}>
+        {props.disabled && (
+          <View style={styles.lineContainer}>
+            <View style={styles.line} />
+          </View>
+        )}
+        <DefaultText style={{ ...styles.buttonText, ...textStyle }}>
+          {children}
+        </DefaultText>
       </View>
     </TouchableOpacity>
   );

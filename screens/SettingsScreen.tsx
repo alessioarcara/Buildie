@@ -12,7 +12,7 @@ type SettingsProps = {
   navigation: NativeStackNavigationProp<StackNavigatorParams, "Settings">;
 };
 
-const Settings = ({ navigation }: SettingsProps) => {
+const SettingsScreen = ({ navigation }: SettingsProps) => {
   const savedGameSpeed = useAppSelector((state) => state.game.initialSpeed);
   const savedSettings = useAppSelector((state) => state.settings);
   const [speed, setSpeed] = useState(savedGameSpeed || 1);
@@ -41,15 +41,8 @@ const Settings = ({ navigation }: SettingsProps) => {
               />
             </View>
           </View>
-          <View
-            style={{
-              paddingVertical: 10,
-              width: "100%",
-            }}
-          >
-            <DefaultText
-              style={{ fontSize: 18, color: "#ccc", paddingVertical: 4 }}
-            >
+          <View style={styles.noteContainer}>
+            <DefaultText style={styles.note}>
               Please note, changing the game speed will reset the game.
             </DefaultText>
           </View>
@@ -93,7 +86,7 @@ const Settings = ({ navigation }: SettingsProps) => {
   );
 };
 
-export default Settings;
+export default SettingsScreen;
 
 const styles = StyleSheet.create({
   settingsContainer: {
@@ -114,6 +107,15 @@ const styles = StyleSheet.create({
   label: {
     color: appColors.white,
     fontSize: 24,
+  },
+  noteContainer: {
+    paddingVertical: 10,
+    width: "100%",
+  },
+  note: {
+    fontSize: 18,
+    color: "#ccc",
+    paddingVertical: 4,
   },
   slider: {
     width: 150,

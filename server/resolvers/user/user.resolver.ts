@@ -1,11 +1,18 @@
-import { Arg, Mutation, Resolver } from "type-graphql";
+import {
+  Arg,
+  Ctx,
+  Mutation,
+  Query,
+  Resolver,
+  UseMiddleware,
+} from "type-graphql";
 import {
   AuthenticatePayload,
   AuthData,
   SignupInput,
   SigninInput,
 } from "./userTypes";
-import { UserModel } from "../../models/User";
+import { User, UserModel } from "../../models/User";
 import { compare } from "bcryptjs";
 import { createTokens, decodeRefreshToken } from "../../utils/auth";
 import { AuthenticationError } from "apollo-server-express";
@@ -15,6 +22,8 @@ import {
   INVALID_PASSWORD,
   EMAIL_EXISTS,
 } from "../../utils/constants";
+import Context from "types/context";
+import { isAuth } from "../../middlewares/isAuth";
 
 @Resolver()
 export default class UserResolver {
@@ -74,5 +83,11 @@ export default class UserResolver {
     await user.save();
 
     return true;
+  }
+
+  @Query(() => User, { nullable: true })
+  @UseMiddleware(isAuth)
+  async me(@Ctx() ctx: Context): Promise<User> {
+    return await UserModel.findById(ctx.user).lean();
   }
 }

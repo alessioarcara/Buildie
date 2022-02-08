@@ -1,4 +1,5 @@
 import * as SQLite from "expo-sqlite";
+import { ScoreData } from "types/Score";
 
 const db = SQLite.openDatabase("buildie.db");
 
@@ -8,7 +9,7 @@ export const init = () =>
       tx.executeSql(
         "\
             CREATE TABLE IF NOT EXISTS scores (\
-                id INTEGER PRIMARY KEY, \
+                _id INTEGER PRIMARY KEY, \
                 username TEXT NOT NULL, \
                 score INTEGER NOT NULL \
             );",
@@ -24,11 +25,11 @@ export const init = () =>
     });
   });
 
-export const fetchScores = () =>
+export const fetchLocalScores = () =>
   new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
-        "SELECT * FROM scores",
+        "SELECT * FROM scores WHERE score > 0 ORDER BY score DESC",
         [],
         (_, result) => {
           resolve(result);
@@ -41,7 +42,7 @@ export const fetchScores = () =>
     });
   });
 
-export const submitScore = (newScore: any) =>
+export const submitLocalScore = (newScore: Omit<ScoreData, "_id">) =>
   new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(
@@ -58,7 +59,7 @@ export const submitScore = (newScore: any) =>
     });
   });
 
-export const clearScores = () =>
+export const clearLocalScores = () =>
   new Promise((resolve, reject) => {
     db.transaction((tx) => {
       tx.executeSql(

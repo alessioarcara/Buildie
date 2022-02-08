@@ -4,7 +4,7 @@ import { SerializedGameState } from "../types/Game";
 const initialState: SerializedGameState = {};
 
 const gameSlice = createSlice({
-  name: "GameState",
+  name: "gameState",
   initialState,
   reducers: {
     setGameState: (_, { payload }: PayloadAction<SerializedGameState>) =>
@@ -12,8 +12,11 @@ const gameSlice = createSlice({
     setGameSpeed: (_, { payload }: PayloadAction<number>) => ({
       initialSpeed: payload,
     }),
+    resetGameState: (state) => ({
+      initialSpeed: state.initialSpeed,
+    }),
   },
 });
 
-export const { setGameState, setGameSpeed } = gameSlice.actions;
+export const { setGameState, setGameSpeed, resetGameState } = gameSlice.actions;
 export default gameSlice.reducer;

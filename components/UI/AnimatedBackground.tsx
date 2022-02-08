@@ -18,21 +18,21 @@ const AnimatedBackground = ({ children }: AnimatedBackgroundProps) => {
   );
   const translation = useRef(new Animated.Value(0)).current;
 
-  const animation = () => {
-    Animated.timing(translation, {
-      toValue: animationHeight,
-      duration: 4000,
-      useNativeDriver: true,
-    }).start(({ finished }) => {
-      if (finished) {
-        setRndWidth(Math.floor(Math.random() * animationWidth));
-        translation.setValue(0);
-        animation();
-      }
-    });
-  };
-
   useEffect(() => {
+    const animation = () => {
+      Animated.timing(translation, {
+        toValue: animationHeight,
+        duration: 4000,
+        useNativeDriver: true,
+      }).start(({ finished }) => {
+        if (finished) {
+          setRndWidth(Math.floor(Math.random() * animationWidth));
+          translation.setValue(0);
+          animation();
+        }
+      });
+    };
+
     animation();
   }, []);
 
@@ -40,8 +40,6 @@ const AnimatedBackground = ({ children }: AnimatedBackgroundProps) => {
     <GradientBackground>
       <Animated.View
         style={{
-          position: "absolute",
-          top: 0,
           left: rndWidth,
           transform: [{ translateY: translation }],
         }}
@@ -58,4 +56,9 @@ const AnimatedBackground = ({ children }: AnimatedBackgroundProps) => {
 
 export default AnimatedBackground;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  animatedPiece: {
+    position: "absolute",
+    top: 0,
+  },
+});
