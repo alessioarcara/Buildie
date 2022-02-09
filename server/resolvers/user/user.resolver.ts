@@ -20,7 +20,7 @@ import {
   INVALID_REFRESH_TOKEN,
   USER_NOT_FOUND,
   INVALID_PASSWORD,
-  EMAIL_EXISTS,
+  EMAIL_OR_USERNAME_EXISTS,
 } from "../../utils/constants";
 import Context from "types/context";
 import { isAuth } from "../../middlewares/isAuth";
@@ -29,8 +29,10 @@ import { isAuth } from "../../middlewares/isAuth";
 export default class UserResolver {
   @Mutation(() => AuthenticatePayload)
   async signup(@Arg("input") input: SignupInput): Promise<AuthenticatePayload> {
-    const existingUser = await UserModel.findOne({ email: input.email }).lean();
-    if (existingUser) return { problem: EMAIL_EXISTS };
+    const existingUser = await UserModel.findOne({
+      $or: [{ email: input.email }, { username: input.username }],
+    }).lean();
+    if (existingUser) return { problem: EMAIL_OR_USERNAME_EXISTS };
 
     const user = await UserModel.create(input);
 
@@ -41,13 +43,16 @@ export default class UserResolver {
 
   @Mutation(() => AuthenticatePayload)
   async signin(
-    @Arg("input") { email, password }: SigninInput
+    @Arg("input") { email, password, expoToken }: SigninInput
   ): Promise<AuthenticatePayload> {
-    const user = await UserModel.findOne({ email }).lean();
+    const user = await UserModel.findOne({ email });
     if (!user) return { problem: USER_NOT_FOUND };
 
     const valid = await compare(password, user.password);
     if (!valid) return { problem: INVALID_PASSWORD };
+
+    user.expoToken = expoToken;
+    await user.save();
 
     return {
       data: { userId: user._id, ...createTokens(user._id, user.count) },
@@ -80,6 +85,7 @@ export default class UserResolver {
     if (!user) return false;
 
     user.count += 1;
+    user.expoToken = undefined;
     await user.save();
 
     return true;

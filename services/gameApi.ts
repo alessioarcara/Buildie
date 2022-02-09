@@ -1,6 +1,8 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { AuthenticatePayload } from "server/resolvers/user/userTypes";
 import {
+  CREATE_GAME_MUTATION,
+  INVALIDATE_REFRESH_TOKEN_MUTATION,
   SCORES_QUERY,
   SIGNIN_MUTATION,
   SIGNUP_MUTATION,
@@ -10,6 +12,7 @@ import { SigninRequest, SignupRequest } from "../types/User";
 import { RootState } from "@store/index";
 import { ScoreData, ScoreResponse } from "types/Score";
 import { graphqlBaseQueryWithReauth } from "./graphqlBaseQuery";
+import { GameResponse } from "types/Game";
 
 export const gameApi = createApi({
   reducerPath: "gameApi",
@@ -23,7 +26,7 @@ export const gameApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Score"],
+  tagTypes: ["Scores"],
   endpoints: (builder) => ({
     signup: builder.mutation<AuthenticatePayload, SignupRequest>({
       query: (user) => ({
@@ -41,12 +44,18 @@ export const gameApi = createApi({
       transformResponse: (response: { signin: AuthenticatePayload }) =>
         response.signin,
     }),
+    logout: builder.mutation<boolean, string>({
+      query: (refreshToken) => ({
+        body: INVALIDATE_REFRESH_TOKEN_MUTATION,
+        variables: { refreshToken },
+      }),
+    }),
     scores: builder.query<ScoreData[], void>({
       query: () => ({
         body: SCORES_QUERY,
       }),
       transformResponse: (response: { scores: ScoreData[] }) => response.scores,
-      providesTags: () => ["Score"],
+      providesTags: () => ["Scores"],
     }),
     submitScore: builder.mutation<ScoreResponse, number>({
       query: (score) => ({
@@ -55,9 +64,22 @@ export const gameApi = createApi({
       }),
       transformResponse: (response: { submitScore: ScoreResponse }) =>
         response.submitScore,
-      invalidatesTags: ["Score"],
+      invalidatesTags: ["Scores"],
+    }),
+    createGame: builder.mutation({
+      query: (username) => ({
+        body: CREATE_GAME_MUTATION,
+        variables: { username },
+      }),
+      transformResponse: (response: { createGame: GameResponse }) =>
+        response.createGame,
     }),
   }),
 });
 
-export const { useSignupMutation, useSigninMutation, useScoresQuery } = gameApi;
+export const {
+  useSignupMutation,
+  useSigninMutation,
+  useScoresQuery,
+  useCreateGameMutation,
+} = gameApi;

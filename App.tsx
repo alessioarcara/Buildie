@@ -4,6 +4,7 @@ import store from "./store";
 import AppNavigator from "@config/AppNavigator";
 import { AppBootstrap } from "@components";
 import { init } from "./helpers/db";
+import * as Notifications from "expo-notifications";
 
 init()
   .then(() => {
@@ -13,6 +14,14 @@ init()
     console.log("Initialized db failed.");
     console.log(err);
   });
+
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: true,
+    shouldSetBadge: true,
+  }),
+});
 
 export default function App() {
   return (

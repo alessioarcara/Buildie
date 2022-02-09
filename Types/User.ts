@@ -1,6 +1,7 @@
 export type SigninRequest = {
   email: string;
   password: string;
+  expoToken?: string;
 };
 
 export type SignupRequest = {

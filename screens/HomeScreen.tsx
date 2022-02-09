@@ -7,8 +7,6 @@ import { View, Text, StyleSheet } from "react-native";
 import { appColors, squareColors } from "@constants/Colors";
 import { useAppSelector } from "@store/hooks";
 
-const menuOptions = ["Singleplayer", "Leaderboard", "Multiplayer", "Settings"];
-
 type HomeProps = {
   navigation: NativeStackNavigationProp<StackNavigatorParams, "Root">;
 };
@@ -18,7 +16,7 @@ const logo = "Buildie";
 const Home = ({ navigation }: HomeProps) => {
   const tabBarHeight = useBottomTabBarHeight();
   const isSignedIn = useAppSelector((state) => !!state.auth.accessToken);
-  const activeGame = useAppSelector((state) => !!state.game);
+  const activeGame = useAppSelector((state) => !!state.game.initialBoard);
 
   return (
     <AnimatedBackground>
@@ -33,20 +31,39 @@ const Home = ({ navigation }: HomeProps) => {
             </Text>
           ))}
         </DefaultText>
-        {menuOptions.map((menuOption: any) => (
-          <DefaultButton
-            key={menuOption}
-            style={styles.homeButton}
-            disabled={menuOption === "Multiplayer" && !isSignedIn}
-            onPress={() => {
-              navigation.navigate(menuOption);
-            }}
-          >
-            {menuOption === "Singleplayer" && activeGame
-              ? "Resume"
-              : menuOption}
-          </DefaultButton>
-        ))}
+        <DefaultButton
+          style={styles.homeButton}
+          onPress={() => {
+            navigation.navigate("Singleplayer");
+          }}
+        >
+          {activeGame ? "Resume" : "New game"}
+        </DefaultButton>
+        <DefaultButton
+          style={styles.homeButton}
+          onPress={() => {
+            navigation.navigate("Leaderboard");
+          }}
+        >
+          Leaderboard
+        </DefaultButton>
+        <DefaultButton
+          style={styles.homeButton}
+          disabled={!isSignedIn}
+          onPress={() => {
+            navigation.navigate("MultiplayerLobby");
+          }}
+        >
+          Multiplayer
+        </DefaultButton>
+        <DefaultButton
+          style={styles.homeButton}
+          onPress={() => {
+            navigation.navigate("Settings");
+          }}
+        >
+          Settings
+        </DefaultButton>
       </View>
     </AnimatedBackground>
   );

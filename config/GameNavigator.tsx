@@ -4,6 +4,8 @@ import {
   LeaderboardScreen,
   SingleplayerScreen,
   SettingsScreen,
+  MultiplayerLobbyScreen,
+  MultiplayerGameScreen,
 } from "@screens";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import RootNavigator from "./RootNavigator";
@@ -15,6 +17,8 @@ export type StackNavigatorParams = {
   Leaderboard: undefined;
   Settings: undefined;
   GameModal: { gameOver: boolean };
+  MultiplayerLobby: undefined;
+  MultiplayerGame: { gameId: string };
 };
 
 const Stack = createNativeStackNavigator<StackNavigatorParams>();
@@ -38,6 +42,20 @@ const GameNavigator = () => {
         }}
       />
       <Stack.Screen name="Leaderboard" component={LeaderboardScreen} />
+      <Stack.Screen
+        name="MultiplayerLobby"
+        component={MultiplayerLobbyScreen}
+        options={{
+          presentation: "transparentModal",
+          headerShown: false,
+          animation: "fade",
+        }}
+      />
+      <Stack.Screen
+        name="MultiplayerGame"
+        component={MultiplayerGameScreen}
+        options={{ headerShown: false }}
+      />
       <Stack.Screen
         name="Settings"
         component={SettingsScreen}

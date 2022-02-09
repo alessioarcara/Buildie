@@ -13,25 +13,24 @@ const useSounds = () => {
   const [didFinish, setDidFinish] = useState(false);
   const areSoundsEnabled = useAppSelector((state) => state.settings.sounds);
 
-  const playMusic = (which: number) => {
-    if (!areSoundsEnabled) return;
-    try {
-      currSoundtrack.current = soundtracks[which];
-      currSoundtrack.current.setStatusAsync({
-        shouldPlay: true,
-        positionMillis: 0,
-        volume: 0.2,
-      });
-      setDidFinish(false);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  const playMusic = useCallback(
+    async (which: number) => {
+      if (!areSoundsEnabled) return;
+      try {
+        currSoundtrack.current = soundtracks[which];
+        await currSoundtrack.current.playFromPositionAsync(0);
+        setDidFinish(false);
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    [areSoundsEnabled, currSoundtrack.current]
+  );
 
-  const stopMusic = () => {
+  const stopMusic = useCallback(() => {
     if (!areSoundsEnabled) return;
     currSoundtrack.current && currSoundtrack.current.stopAsync();
-  };
+  }, [areSoundsEnabled, currSoundtrack.current]);
 
   useEffect(() => {
     if (!areSoundsEnabled) return;
@@ -41,7 +40,7 @@ const useSounds = () => {
         for (let i = 0; i < soundtracks.length; i += 1) {
           const { sound: soundtrackObject } = await Audio.Sound.createAsync(
             Soundtracks[i],
-            undefined,
+            { volume: 0.2 },
             ({ didJustFinish }: any) => {
               if (didJustFinish) setDidFinish(true);
             }

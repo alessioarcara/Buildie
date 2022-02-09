@@ -10,14 +10,14 @@ import GameHeader from "./GameHeader";
 import Piece from "./Piece";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorParams } from "@config/GameNavigator";
-import IconButton from "../UI/IconButton";
 import useSounds from "@hooks/useSounds";
 
 type GameProps = {
   game: GameClass;
+  children: React.ReactNode;
 };
 
-const Game = ({ game }: GameProps) => {
+const Game = ({ game, children }: GameProps) => {
   const navigation =
     useNavigation<
       NativeStackNavigationProp<StackNavigatorParams, "Singleplayer">
@@ -36,22 +36,16 @@ const Game = ({ game }: GameProps) => {
 
   const { start, stop } = useGameLoop(game.speed, update, draw);
 
-  const handlePause = useCallback(() => {
-    navigation.navigate("GameModal", { gameOver: false });
-  }, []);
-
   useFocusEffect(
     useCallback(() => {
       if (game.gameOver) {
         game.reset();
       }
       start();
-      playMusic(game.speed);
       return () => {
         stop();
-        stopMusic();
       };
-    }, [game.speed])
+    }, [game.speed, stopMusic])
   );
 
   useEffect(() => {
@@ -81,10 +75,7 @@ const Game = ({ game }: GameProps) => {
         <View style={styles.sidePanel}>
           <Piece title="hold" piece={game.heldPiece} />
           <Piece title="next" piece={game.nextPiece} />
-          <IconButton
-            pressHandler={handlePause}
-            icon={require("../../assets/images/pause.png")}
-          />
+          {children}
         </View>
       </View>
       <Joystick handleInput={handleInput} />

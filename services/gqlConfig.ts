@@ -36,6 +36,12 @@ export const REFRESH_TOKEN_MUTATION = gql`
   }
 `;
 
+export const INVALIDATE_REFRESH_TOKEN_MUTATION = gql`
+  mutation ($refreshToken: String!) {
+    invalidateRefreshToken(refreshToken: $refreshToken)
+  }
+`;
+
 export const SCORES_QUERY = gql`
   query {
     scores {
@@ -53,6 +59,17 @@ export const SUBMIT_SCORE_MUTATION = gql`
         _id
         score
         username
+      }
+      problem
+    }
+  }
+`;
+
+export const CREATE_GAME_MUTATION = gql`
+  mutation ($username: String!) {
+    createGame(username: $username) {
+      data {
+        gameId
       }
       problem
     }

@@ -23,7 +23,7 @@ export class User {
   email: string;
 
   @Field()
-  @prop({ required: true })
+  @prop({ required: true, unique: true, lowercase: true })
   username: string;
 
   @prop({ required: true })
@@ -35,6 +35,10 @@ export class User {
   @Field(() => Int)
   @prop({ default: 0 })
   score: number;
+
+  @Field()
+  @prop()
+  expoToken?: string;
 }
 
 export const UserModel = getModelForClass(User);

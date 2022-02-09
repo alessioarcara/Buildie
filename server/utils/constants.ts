@@ -4,5 +4,6 @@ export const INVALID_ACCESS_TOKEN =
 export const USER_NOT_FOUND =
   "There is no user record corresponding to this identifier";
 export const INVALID_PASSWORD = "The password is invalid";
-export const EMAIL_EXISTS =
-  "The email address is already in use by another account.";
+export const EMAIL_OR_USERNAME_EXISTS =
+  "The email address or username is already in use by another account.";
+export const INVALID_PLAYER = "That player can't be invited";

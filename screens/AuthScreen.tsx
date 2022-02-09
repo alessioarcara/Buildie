@@ -7,44 +7,42 @@ import {
   ActivityIndicator,
   View,
 } from "react-native";
-import React, { useCallback, useState } from "react";
+import React, { useState } from "react";
 import { Card, DefaultButton, GradientBackground, Input } from "@components";
 import { useSigninMutation, useSignupMutation } from "../services/gameApi";
 import useForm from "../hooks/useForm";
 import { useAppDispatch } from "@store/hooks";
 import { authenticate } from "@store/authThunks";
 import defaultStyles from "@constants/defaultStyles";
+import usePushNotification from "@hooks/usePushNotification";
+import { handleErrorResponse } from "../helpers/utils";
 
 const AuthScreen = () => {
   const [isNewUser, setIsNewUser] = useState(false);
   const [{ inputValues, inputValidities, formIsValid }, inputChangeHandler] =
     useForm({ username: "", email: "", password: "" });
   const dispatch = useAppDispatch();
+  const getPushToken = usePushNotification();
 
   const [signin, { isLoading }] = useSigninMutation({
     fixedCacheKey: "shared-auth",
   });
   const [signup] = useSignupMutation({ fixedCacheKey: "shared-auth" });
 
-  const handleErrorResponse = useCallback(
-    (error: string = "Something went wrong!") => {
-      Alert.alert("There's a problem", error), [{ text: "Okay" }];
-    },
-    []
-  );
-
-  const authHandler = () => {
+  const authHandler = async () => {
+    const expoToken = await getPushToken();
     const { username, ...user } = inputValues;
-    (isNewUser ? signup(inputValues) : signin(user))
-      .unwrap()
-      .then((authResponse) => {
-        authResponse.data
-          ? dispatch(authenticate(authResponse.data))
-          : handleErrorResponse(authResponse.problem);
-      })
-      .catch(() => {
-        handleErrorResponse();
-      });
+    try {
+      const authResponse = await (isNewUser
+        ? signup({ ...inputValues, expoToken })
+        : signin({ ...user, expoToken })
+      ).unwrap();
+      authResponse.data
+        ? dispatch(authenticate(authResponse.data))
+        : handleErrorResponse(authResponse.problem);
+    } catch (err) {
+      handleErrorResponse();
+    }
   };
 
   return (

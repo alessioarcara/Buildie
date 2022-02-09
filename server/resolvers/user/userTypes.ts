@@ -23,6 +23,8 @@ export class SigninInput implements Pick<User, "email" | "password"> {
   email: string;
   @Field()
   password: string;
+  @Field({ nullable: true })
+  expoToken: string;
 }
 
 @InputType()

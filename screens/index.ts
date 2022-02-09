@@ -6,3 +6,5 @@ export { default as GameModalScreen } from "./GameModalScreen";
 export { default as AuthScreen } from "./AuthScreen";
 export { default as SplashScreen } from "./SplashScreen";
 export { default as SettingsScreen } from "./SettingsScreen";
+export { default as MultiplayerLobbyScreen } from "./MultiplayerLobbyScreen";
+export { default as MultiplayerGameScreen } from "./MultiplayerGameScreen";

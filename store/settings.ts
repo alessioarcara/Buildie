@@ -11,7 +11,7 @@ const initialState: SettingsState = {
 };
 
 const settingsSlice = createSlice({
-  name: "Settings",
+  name: "settings",
   initialState,
   reducers: {
     setSettings: (_, { payload }: PayloadAction<SettingsState>) => payload,

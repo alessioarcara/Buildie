@@ -14,3 +14,12 @@ export type InitialGameState = {
 export type SerializedGameState = {
   initialBoard?: number[];
 } & GameState;
+
+export type GameData = {
+  gameId: string;
+};
+
+export type GameResponse = {
+  data?: GameData;
+  problem?: string;
+};
