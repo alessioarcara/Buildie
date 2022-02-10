@@ -21,6 +21,10 @@ export class Game {
   @prop({ enum: GameStatus, default: GameStatus.IDLE })
   gameStatus: GameStatus;
 
+  @Field({ nullable: true })
+  @prop()
+  winner: string;
+
   @prop({ required: true })
   initiator: string;
 
@@ -36,12 +40,12 @@ export class Game {
   inviteeGameover: boolean;
 
   @Field(() => [Int])
-  @prop({ type: [Number] })
-  initiatorState: number[];
+  @prop({ type: [Number], default: [] })
+  initiatorBoard: number[];
 
   @Field(() => [Int])
-  @prop({ type: [Number] })
-  inviteeState: number[];
+  @prop({ type: [Number], default: [] })
+  inviteeBoard: number[];
 }
 
 export const GameModel = getModelForClass(Game);

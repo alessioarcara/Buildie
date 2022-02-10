@@ -1,11 +1,5 @@
 import { Alert, StyleSheet } from "react-native";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { Board, GradientBackground, MultiplayerGame } from "@components";
 import { useGameQuery, useUpdateGameMutation } from "../services/gameApi";
 import { RouteProp } from "@react-navigation/native";
@@ -29,8 +23,9 @@ const MultiplayerGameScreen = ({
   route,
 }: MultiplayerGameScreenProps) => {
   const { data: sharedGame } = useGameQuery(route.params.gameId, {
-    pollingInterval: 1000,
+    pollingInterval: 2000,
   });
+
   const [updateGame] = useUpdateGameMutation();
 
   const game = useConst(() => new GameClass({}));
@@ -54,17 +49,13 @@ const MultiplayerGameScreen = ({
     }
     if (sharedGame?.gameStatus === "FINISHED") {
       stop();
-      Alert.alert(
-        "Congratulations",
-        `${sharedGame.initiatorGameover ? "You lose" : "You win"}`,
-        [
-          {
-            text: "Home",
-            onPress: () => navigation.navigate("Root"),
-            style: "destructive",
-          },
-        ]
-      );
+      Alert.alert("Game over", `${sharedGame.winner} win!`, [
+        {
+          text: "Home",
+          onPress: () => navigation.navigate("Root"),
+          style: "destructive",
+        },
+      ]);
     }
   }, [sharedGame?.gameStatus]);
 
@@ -74,6 +65,14 @@ const MultiplayerGameScreen = ({
       gameOver: game.gameOver,
       playerBoard: Array.from(game.board),
     });
+
+    return () => {
+      updateGame({
+        gameId: route.params.gameId,
+        gameOver: true,
+        playerBoard: Array.from(game.board),
+      });
+    };
   }, []);
 
   const handleInput = useCallback((keyCode: string) => {
@@ -84,8 +83,8 @@ const MultiplayerGameScreen = ({
   const opponentBoard = useMemo(
     () =>
       (route.params.initiator
-        ? sharedGame?.inviteeState
-        : sharedGame?.initiatorState) ?? [],
+        ? sharedGame?.inviteeBoard
+        : sharedGame?.initiatorBoard) ?? [],
     [sharedGame]
   );
 

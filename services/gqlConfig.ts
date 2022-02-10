@@ -78,7 +78,7 @@ export const CREATE_GAME_MUTATION = gql`
 
 export const UPDATE_GAME_MUTATION = gql`
   mutation ($gameId: ID!, $gameOver: Boolean!, $playerBoard: [Int!]!) {
-    updateGameState(
+    updateGame(
       gameId: $gameId
       gameOver: $gameOver
       playerBoard: $playerBoard
@@ -86,9 +86,9 @@ export const UPDATE_GAME_MUTATION = gql`
       data {
         gameStatus
         initiatorGameover
-        initiatorState
+        initiatorBoard
         inviteeGameover
-        inviteeState
+        inviteeBoard
       }
       problem
     }
@@ -98,12 +98,12 @@ export const UPDATE_GAME_MUTATION = gql`
 export const GAME_QUERY = gql`
   query ($gameId: String!) {
     game(gameId: $gameId) {
-      _id
       gameStatus
+      initiatorBoard
       initiatorGameover
-      initiatorState
       inviteeGameover
-      inviteeState
+      inviteeBoard
+      winner
     }
   }
 `;

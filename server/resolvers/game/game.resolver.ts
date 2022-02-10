@@ -79,7 +79,7 @@ export default class GameResolver {
 
   @Mutation(() => UpdateGamePayload)
   @UseMiddleware(isAuth)
-  async updateGameState(
+  async updateGame(
     @Args() { gameId, gameOver, playerBoard }: UpdateGameArgs,
     @Ctx() ctx: Context
   ): Promise<UpdateGamePayload> {
@@ -91,20 +91,24 @@ export default class GameResolver {
 
     switch (user?.username) {
       case game.initiator:
-        game.initiatorState = playerBoard;
+        game.initiatorBoard = playerBoard;
         game.initiatorGameover = gameOver;
         break;
       case game.invitee:
         if (game.gameStatus === GameStatus.IDLE) {
           game.gameStatus = GameStatus.STARTED;
         }
-        game.inviteeState = playerBoard;
+        game.inviteeBoard = playerBoard;
         game.inviteeGameover = gameOver;
         break;
     }
 
-    if (game.initiatorGameover || game.inviteeGameover) {
+    if (game.initiatorGameover) {
       game.gameStatus = GameStatus.FINISHED;
+      game.winner = game.invitee;
+    } else if (game.inviteeGameover) {
+      game.gameStatus = GameStatus.FINISHED;
+      game.winner = game.initiator;
     }
 
     await game.save();

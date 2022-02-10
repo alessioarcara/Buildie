@@ -17,5 +17,5 @@ export class UpdateGameArgs {
 @ObjectType()
 export class CreateGamePayload extends MutationPayload(Game) {}
 
-@ObjectType()
+@ObjectType({ simpleResolvers: true })
 export class UpdateGamePayload extends MutationPayload(Game) {}

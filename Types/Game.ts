@@ -23,10 +23,11 @@ enum GameStatus {
 
 export type GameData = {
   _id: string;
-  gameStatus: string;
-  initiatorState: number[];
+  gameStatus: GameStatus;
+  winner: string;
+  initiatorBoard: number[];
   initiatorGameover: boolean;
-  inviteeState: number[];
+  inviteeBoard: number[];
   inviteeGameOver: boolean;
 };
 

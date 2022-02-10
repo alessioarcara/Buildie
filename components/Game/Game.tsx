@@ -17,7 +17,7 @@ type GameProps = {
   children: React.ReactNode;
 };
 
-const boardWidth = (Dimensions.get("window").width * 2) / 3;
+const boardWidth = Dimensions.get("window").height * 0.3;
 
 const Game = ({ game, children }: GameProps) => {
   const navigation =

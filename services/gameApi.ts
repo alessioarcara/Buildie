@@ -1,5 +1,8 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { AuthenticatePayload } from "server/resolvers/user/userTypes";
+import type { BaseQueryFn } from "@reduxjs/toolkit/dist/query/baseQueryTypes";
+import { request, ClientError } from "graphql-request";
+import { graphqlRequestBaseQueryArgs } from "./graphqlBaseQueryTypes";
+import * as SecureStore from "expo-secure-store";
 import {
   CREATE_GAME_MUTATION,
   GAME_QUERY,
@@ -9,12 +12,80 @@ import {
   SIGNUP_MUTATION,
   SUBMIT_SCORE_MUTATION,
   UPDATE_GAME_MUTATION,
+  REFRESH_TOKEN_MUTATION,
 } from "./gqlConfig";
-import { SigninRequest, SignupRequest } from "../types/User";
-import { RootState } from "@store/index";
+import { AuthResponse, SigninRequest, SignupRequest } from "../types/User";
 import { ScoreData, ScoreResponse } from "types/Score";
-import { graphqlBaseQueryWithReauth } from "./graphqlBaseQuery";
 import { GameData, GameRequest, GameResponse } from "types/Game";
+import { authenticate } from "@store/authThunks";
+import { AppThunk, RootState } from "@store/index";
+import { logout } from "@store/auth";
+import { USER_DATA } from "@constants/PersistedData";
+
+export const invalidate = (): AppThunk => (dispatch, getState) => {
+  const refreshToken = (getState() as RootState).auth.refreshToken;
+  SecureStore.deleteItemAsync(USER_DATA);
+  dispatch(gameApi.endpoints.logout.initiate(refreshToken!));
+  dispatch(logout());
+};
+
+export const graphqlBaseQueryWithReauth =
+  ({
+    baseUrl,
+    prepareHeaders = (headers) => headers,
+  }: graphqlRequestBaseQueryArgs): BaseQueryFn<
+    { body: string; variables?: any },
+    unknown,
+    Pick<ClientError, "name" | "message" | "stack">
+  > =>
+  async ({ body, variables }, { getState, dispatch }) => {
+    function headers() {
+      return prepareHeaders(new Headers(), {
+        getState,
+        dispatch,
+      });
+    }
+    try {
+      return { data: await request(baseUrl, body, variables, await headers()) };
+    } catch (error) {
+      if (error instanceof ClientError) {
+        if (
+          error.response.errors?.some(
+            (e) => e.extensions?.code === "UNAUTHENTICATED"
+          )
+        ) {
+          try {
+            const refreshToken = (getState() as RootState).auth.refreshToken;
+            const refreshResult = await request(
+              baseUrl,
+              REFRESH_TOKEN_MUTATION,
+              {
+                refreshToken,
+              }
+            );
+            dispatch(authenticate(refreshResult.refreshToken));
+            return {
+              data: await request(baseUrl, body, variables, await headers()),
+            };
+          } catch (error) {
+            dispatch(invalidate());
+            return {
+              error: {
+                name: "REFRESH_TOKEN",
+                message: "Invalid or expired refresh token",
+              },
+            };
+          }
+        }
+        const { name, message, stack } = error;
+        return { error: { name, message, stack } };
+      }
+      if (error instanceof Error) {
+        return { error: { name: "Error", message: error.message } };
+      }
+      throw error;
+    }
+  };
 
 export const gameApi = createApi({
   reducerPath: "gameApi",
@@ -30,20 +101,20 @@ export const gameApi = createApi({
   }),
   tagTypes: ["Scores"],
   endpoints: (builder) => ({
-    signup: builder.mutation<AuthenticatePayload, SignupRequest>({
+    signup: builder.mutation<AuthResponse, SignupRequest>({
       query: (user) => ({
         body: SIGNUP_MUTATION,
         variables: { input: user },
       }),
-      transformResponse: (response: { signup: AuthenticatePayload }) =>
+      transformResponse: (response: { signup: AuthResponse }) =>
         response.signup,
     }),
-    signin: builder.mutation<AuthenticatePayload, SigninRequest>({
+    signin: builder.mutation<AuthResponse, SigninRequest>({
       query: (user) => ({
         body: SIGNIN_MUTATION,
         variables: { input: user },
       }),
-      transformResponse: (response: { signin: AuthenticatePayload }) =>
+      transformResponse: (response: { signin: AuthResponse }) =>
         response.signin,
     }),
     logout: builder.mutation<boolean, string>({
@@ -92,8 +163,8 @@ export const gameApi = createApi({
           playerBoard: game.playerBoard,
         },
       }),
-      transformResponse: (response: { updateGameState: GameResponse }) =>
-        response.updateGameState,
+      transformResponse: (response: { updateGame: GameResponse }) =>
+        response.updateGame,
     }),
   }),
 });
