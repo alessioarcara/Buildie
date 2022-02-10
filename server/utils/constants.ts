@@ -6,4 +6,6 @@ export const USER_NOT_FOUND =
 export const INVALID_PASSWORD = "The password is invalid";
 export const EMAIL_OR_USERNAME_EXISTS =
   "The email address or username is already in use by another account.";
-export const INVALID_PLAYER = "That player can't be invited";
+export const INVALID_PLAYER = "That player can't be invited.";
+export const INVALID_TOKEN = "Can't send notification with that token.";
+export const INVALID_GAME = "The game is invalid";

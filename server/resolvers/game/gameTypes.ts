@@ -1,15 +1,21 @@
 import { MutationPayload } from "../genericTypes";
-import { Field, ID, Int, ObjectType } from "type-graphql";
+import { ArgsType, Field, ID, Int, ObjectType } from "type-graphql";
+import { Game } from "../../models/Game";
 
-@ObjectType()
-export class GameData {
+@ArgsType()
+export class UpdateGameArgs {
   @Field(() => ID)
   gameId: string;
+
+  @Field()
+  gameOver: boolean;
+
   @Field(() => [Int])
-  initiatorState: number[];
-  @Field(() => [Int])
-  inviteeState: number[];
+  playerBoard: number[];
 }
 
 @ObjectType()
-export class CreateGamePayload extends MutationPayload(GameData) {}
+export class CreateGamePayload extends MutationPayload(Game) {}
+
+@ObjectType()
+export class UpdateGamePayload extends MutationPayload(Game) {}

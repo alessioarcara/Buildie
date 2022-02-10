@@ -2,17 +2,19 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { AuthenticatePayload } from "server/resolvers/user/userTypes";
 import {
   CREATE_GAME_MUTATION,
+  GAME_QUERY,
   INVALIDATE_REFRESH_TOKEN_MUTATION,
   SCORES_QUERY,
   SIGNIN_MUTATION,
   SIGNUP_MUTATION,
   SUBMIT_SCORE_MUTATION,
+  UPDATE_GAME_MUTATION,
 } from "./gqlConfig";
 import { SigninRequest, SignupRequest } from "../types/User";
 import { RootState } from "@store/index";
 import { ScoreData, ScoreResponse } from "types/Score";
 import { graphqlBaseQueryWithReauth } from "./graphqlBaseQuery";
-import { GameResponse } from "types/Game";
+import { GameData, GameRequest, GameResponse } from "types/Game";
 
 export const gameApi = createApi({
   reducerPath: "gameApi",
@@ -74,6 +76,25 @@ export const gameApi = createApi({
       transformResponse: (response: { createGame: GameResponse }) =>
         response.createGame,
     }),
+    game: builder.query<GameData, string>({
+      query: (gameId) => ({
+        body: GAME_QUERY,
+        variables: { gameId },
+      }),
+      transformResponse: (response: { game: GameData }) => response.game,
+    }),
+    updateGame: builder.mutation<GameResponse, GameRequest>({
+      query: (game) => ({
+        body: UPDATE_GAME_MUTATION,
+        variables: {
+          gameId: game.gameId,
+          gameOver: game.gameOver,
+          playerBoard: game.playerBoard,
+        },
+      }),
+      transformResponse: (response: { updateGameState: GameResponse }) =>
+        response.updateGameState,
+    }),
   }),
 });
 
@@ -82,4 +103,6 @@ export const {
   useSigninMutation,
   useScoresQuery,
   useCreateGameMutation,
+  useGameQuery,
+  useUpdateGameMutation,
 } = gameApi;

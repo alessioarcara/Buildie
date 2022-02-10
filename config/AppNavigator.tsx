@@ -20,6 +20,7 @@ const AppNavigator = () => {
           if ("gameId" in data && typeof data.gameId === "string") {
             navigationRef.current?.navigate("MultiplayerGame", {
               gameId: data.gameId,
+              initiator: false,
             });
           }
         });

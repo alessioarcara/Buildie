@@ -16,7 +16,15 @@ import mongoose from "mongoose";
   });
 
   const subscriptionServer = SubscriptionServer.create(
-    { schema, execute, subscribe },
+    {
+      schema,
+      execute,
+      subscribe,
+      onConnect: (connectionParams: any, webSocket: any) => {
+        console.log(connectionParams);
+        console.log(webSocket);
+      },
+    },
     { server: httpServer, path: "/graphql" }
   );
 

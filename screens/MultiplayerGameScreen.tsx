@@ -1,11 +1,101 @@
-import { StyleSheet, Text } from "react-native";
-import React from "react";
-import { GradientBackground } from "@components";
+import { Alert, StyleSheet } from "react-native";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+import { Board, GradientBackground, MultiplayerGame } from "@components";
+import { useGameQuery, useUpdateGameMutation } from "../services/gameApi";
+import { RouteProp } from "@react-navigation/native";
+import { StackNavigatorParams } from "@config/GameNavigator";
+import useConst from "@hooks/useConst";
+import GameClass from "@models/Game";
+import useGameLoop from "@hooks/useGameLoop";
+import useForceUpdate from "@hooks/useForceUpdate";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 
-const MultiplayerGameScreen = () => {
+type MultiplayerGameScreenProps = {
+  navigation: NativeStackNavigationProp<
+    StackNavigatorParams,
+    "MultiplayerGame"
+  >;
+  route: RouteProp<StackNavigatorParams, "MultiplayerGame">;
+};
+
+const MultiplayerGameScreen = ({
+  navigation,
+  route,
+}: MultiplayerGameScreenProps) => {
+  const { data: sharedGame } = useGameQuery(route.params.gameId, {
+    pollingInterval: 1000,
+  });
+  const [updateGame] = useUpdateGameMutation();
+
+  const game = useConst(() => new GameClass({}));
+
+  const draw = useForceUpdate();
+
+  const update = useCallback(() => {
+    game.update();
+    updateGame({
+      gameId: route.params.gameId,
+      gameOver: game.gameOver,
+      playerBoard: Array.from(game.board),
+    });
+  }, []);
+
+  const { start, stop } = useGameLoop(game.speed, update, draw);
+
+  useEffect(() => {
+    if (sharedGame?.gameStatus === "STARTED") {
+      start();
+    }
+    if (sharedGame?.gameStatus === "FINISHED") {
+      stop();
+      Alert.alert(
+        "Congratulations",
+        `${sharedGame.initiatorGameover ? "You lose" : "You win"}`,
+        [
+          {
+            text: "Home",
+            onPress: () => navigation.navigate("Root"),
+            style: "destructive",
+          },
+        ]
+      );
+    }
+  }, [sharedGame?.gameStatus]);
+
+  useEffect(() => {
+    updateGame({
+      gameId: route.params.gameId,
+      gameOver: game.gameOver,
+      playerBoard: Array.from(game.board),
+    });
+  }, []);
+
+  const handleInput = useCallback((keyCode: string) => {
+    game.inputHandler(keyCode);
+    draw();
+  }, []);
+
+  const opponentBoard = useMemo(
+    () =>
+      (route.params.initiator
+        ? sharedGame?.inviteeState
+        : sharedGame?.initiatorState) ?? [],
+    [sharedGame]
+  );
+
   return (
     <GradientBackground>
-      <Text>CIAO</Text>
+      <MultiplayerGame
+        game={game}
+        handleInput={handleInput}
+        children={<Board board={opponentBoard} boardWidth={75} />}
+      />
     </GradientBackground>
   );
 };

@@ -14,8 +14,8 @@ const Cell = ({ type, width, border }: CellProps) => {
       style={{
         ...styles.cell,
         ...{
-          borderBottomWidth: border ? 0 : 2,
-          borderColor: border ? "" : "black",
+          borderBottomWidth: border ? 2 : 0,
+          borderColor: border ? "black" : "",
           width,
           height: width,
           backgroundColor: squareColors[type],

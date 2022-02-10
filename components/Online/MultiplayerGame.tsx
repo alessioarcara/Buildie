@@ -1,13 +1,11 @@
-import React, { useCallback, useEffect, useLayoutEffect } from "react";
+import React, { useEffect, useLayoutEffect } from "react";
 import { Dimensions, StyleSheet, View } from "react-native";
 import GameClass from "@models/Game";
-import Board from "./Board";
-import useGameLoop from "@hooks/useGameLoop";
-import Joystick from "./Joystick";
-import useForceUpdate from "@hooks/useForceUpdate";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import GameHeader from "./GameHeader";
-import Piece from "./Piece";
+import Board from "../Game/Board";
+import Joystick from "../Game/Joystick";
+import { useNavigation } from "@react-navigation/native";
+import GameHeader from "../Game/GameHeader";
+import Piece from "../Game/Piece";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { StackNavigatorParams } from "@config/GameNavigator";
 import useSounds from "@hooks/useSounds";
@@ -15,52 +13,23 @@ import useSounds from "@hooks/useSounds";
 type GameProps = {
   game: GameClass;
   children: React.ReactNode;
+  handleInput: (keyCode: string) => void;
 };
 
-const boardWidth = (Dimensions.get("window").width * 2) / 3;
+const boardWidth = Dimensions.get("window").height * 0.3;
 
-const Game = ({ game, children }: GameProps) => {
+const MultiplayerGame = ({ game, children, handleInput }: GameProps) => {
   const navigation =
     useNavigation<
       NativeStackNavigationProp<StackNavigatorParams, "Singleplayer">
     >();
   const [playMusic, _, { isLoading, didFinish }] = useSounds();
-  const draw = useForceUpdate();
-
-  const handleInput = useCallback((keyCode: string) => {
-    game.inputHandler(keyCode);
-    draw();
-  }, []);
-
-  const update = useCallback(() => {
-    game.update();
-  }, []);
-
-  const { start, stop } = useGameLoop(game.speed, update, draw);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (game.gameOver) {
-        game.reset();
-      }
-      start();
-      return () => {
-        stop();
-      };
-    }, [game.speed])
-  );
 
   useEffect(() => {
     if (!isLoading) {
       playMusic(game.speed);
     }
   }, [isLoading, didFinish]);
-
-  useEffect(() => {
-    if (game.gameOver) {
-      navigation.navigate("GameModal", { gameOver: true });
-    }
-  }, [game.gameOver]);
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -90,7 +59,7 @@ const Game = ({ game, children }: GameProps) => {
   );
 };
 
-export default Game;
+export default MultiplayerGame;
 
 const styles = StyleSheet.create({
   gameContainer: {

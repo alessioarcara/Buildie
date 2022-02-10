@@ -69,9 +69,41 @@ export const CREATE_GAME_MUTATION = gql`
   mutation ($username: String!) {
     createGame(username: $username) {
       data {
-        gameId
+        _id
       }
       problem
+    }
+  }
+`;
+
+export const UPDATE_GAME_MUTATION = gql`
+  mutation ($gameId: ID!, $gameOver: Boolean!, $playerBoard: [Int!]!) {
+    updateGameState(
+      gameId: $gameId
+      gameOver: $gameOver
+      playerBoard: $playerBoard
+    ) {
+      data {
+        gameStatus
+        initiatorGameover
+        initiatorState
+        inviteeGameover
+        inviteeState
+      }
+      problem
+    }
+  }
+`;
+
+export const GAME_QUERY = gql`
+  query ($gameId: String!) {
+    game(gameId: $gameId) {
+      _id
+      gameStatus
+      initiatorGameover
+      initiatorState
+      inviteeGameover
+      inviteeState
     }
   }
 `;

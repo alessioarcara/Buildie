@@ -86,7 +86,7 @@ class Board {
   reset() {
     this._score = 0;
     this._lines = 0;
-    this._speed = 1;
+    this._speed = this._initialSpeed;
     this._board = this.init();
   }
 }

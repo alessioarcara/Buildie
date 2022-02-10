@@ -18,7 +18,7 @@ export type StackNavigatorParams = {
   Settings: undefined;
   GameModal: { gameOver: boolean };
   MultiplayerLobby: undefined;
-  MultiplayerGame: { gameId: string };
+  MultiplayerGame: { gameId: string; initiator: boolean };
 };
 
 const Stack = createNativeStackNavigator<StackNavigatorParams>();
@@ -51,11 +51,7 @@ const GameNavigator = () => {
           animation: "fade",
         }}
       />
-      <Stack.Screen
-        name="MultiplayerGame"
-        component={MultiplayerGameScreen}
-        options={{ headerShown: false }}
-      />
+      <Stack.Screen name="MultiplayerGame" component={MultiplayerGameScreen} />
       <Stack.Screen
         name="Settings"
         component={SettingsScreen}

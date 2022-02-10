@@ -1,5 +1,4 @@
 import {
-  Alert,
   KeyboardAvoidingView,
   Platform,
   Pressable,
@@ -38,7 +37,8 @@ const MultiplayerScreen = ({ navigation }: MultiplayerScreenProps) => {
       const gameResponse = await createGame(username).unwrap();
       gameResponse.data
         ? navigation.replace("MultiplayerGame", {
-            gameId: gameResponse.data.gameId,
+            gameId: gameResponse.data._id,
+            initiator: true,
           })
         : handleErrorResponse(gameResponse.problem);
     } catch (err) {

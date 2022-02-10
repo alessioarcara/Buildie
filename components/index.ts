@@ -13,3 +13,4 @@ export { default as ScoreItem } from "./Leaderboard/ScoreItem";
 export { default as ScoreListHeader } from "./Leaderboard/ScoreListHeader";
 export { default as GameOver } from "./Modal/Gameover";
 export { default as Pause } from "./Modal/Pause";
+export { default as MultiplayerGame } from "./Online/MultiplayerGame";

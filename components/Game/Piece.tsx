@@ -19,7 +19,7 @@ const Piece = ({ title, piece, transparentBackground }: PieceProps) => {
         key={`h_${idx}`}
         type={+type === 0 && transparentBackground ? -1 : +type}
         width={pieceWidth / 4}
-        border={transparentBackground}
+        border={!transparentBackground}
       />
     ));
 
