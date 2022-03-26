@@ -90,7 +90,7 @@ export const graphqlBaseQueryWithReauth =
 export const gameApi = createApi({
   reducerPath: "gameApi",
   baseQuery: graphqlBaseQueryWithReauth({
-    baseUrl: "http://192.168.178.90:4000/graphql",
+    baseUrl: "http:/192.168.178.90:4000/graphql",
     prepareHeaders: (headers, { getState }) => {
       const accessToken = (getState() as RootState).auth.accessToken;
       if (accessToken) {
@@ -153,6 +153,12 @@ export const gameApi = createApi({
         variables: { gameId },
       }),
       transformResponse: (response: { game: GameData }) => response.game,
+      async onCacheEntryAdded(
+        arg,
+        { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
+      ) {
+        const ws = new WebSocket("ws://192.168.178.90:4000/graphql");
+      },
     }),
     updateGame: builder.mutation<GameResponse, GameRequest>({
       query: (game) => ({

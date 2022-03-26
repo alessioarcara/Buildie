@@ -2,7 +2,7 @@
 // import { prop, getModelForClass, Ref } from "@typegoose/typegoose";
 // import { User, UserModel } from "./User";
 
-// @ObjectType({ description: "The player model", simpleResolvers: true })
+// @ObjectType({ description: "The player model" })
 // export class Player {
 //   @Field(() => ID)
 //   @prop({ ref: () => UserModel, required: true })
