@@ -25,6 +25,7 @@ import mongoose from "mongoose";
     server: httpServer,
     path: "/graphql",
   });
+  // Save the returned server's info so we can shutdown this server later
   const serverCleanup = useServer({ schema }, wsServer);
 
   // Set up ApolloServer.

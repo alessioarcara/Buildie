@@ -22,9 +22,7 @@ const MultiplayerGameScreen = ({
   navigation,
   route,
 }: MultiplayerGameScreenProps) => {
-  const { data: sharedGame } = useGameQuery(route.params.gameId, {
-    pollingInterval: 2000,
-  });
+  const { data: sharedGame } = useGameQuery(route.params.gameId);
 
   const [updateGame] = useUpdateGameMutation();
 

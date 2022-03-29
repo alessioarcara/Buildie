@@ -1,6 +1,7 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import type { BaseQueryFn } from "@reduxjs/toolkit/dist/query/baseQueryTypes";
 import { request, ClientError } from "graphql-request";
+import { createClient } from "graphql-ws";
 import { graphqlRequestBaseQueryArgs } from "./graphqlBaseQueryTypes";
 import * as SecureStore from "expo-secure-store";
 import {
@@ -87,6 +88,10 @@ export const graphqlBaseQueryWithReauth =
     }
   };
 
+const client = createClient({
+  url: "ws://192.168.178.90:4000/graphql",
+});
+
 export const gameApi = createApi({
   reducerPath: "gameApi",
   baseQuery: graphqlBaseQueryWithReauth({
@@ -99,7 +104,7 @@ export const gameApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Scores"],
+  tagTypes: ["Scores", "Game"],
   endpoints: (builder) => ({
     signup: builder.mutation<AuthResponse, SignupRequest>({
       query: (user) => ({
@@ -154,10 +159,36 @@ export const gameApi = createApi({
       }),
       transformResponse: (response: { game: GameData }) => response.game,
       async onCacheEntryAdded(
-        arg,
+        gameId,
         { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
       ) {
-        const ws = new WebSocket("ws://192.168.178.90:4000/graphql");
+        try {
+          await cacheDataLoaded;
+        } catch {}
+        (async () => {
+          const onNext = (payload: any) => {
+            updateCachedData(() => {
+              return payload.data.gameUpdate;
+            });
+          };
+
+          let unsubscribe = () => {
+            console.log("UNSUBSCRIBE");
+          };
+
+          await new Promise((resolve, reject) => {
+            unsubscribe = client.subscribe(
+              {
+                query: `subscription { gameUpdate(gameId: "${gameId}") { gameStatus winner players { user board } } }`,
+              },
+              {
+                next: onNext,
+                error: reject,
+                complete: () => resolve,
+              }
+            );
+          });
+        })();
       },
     }),
     updateGame: builder.mutation<GameResponse, GameRequest>({

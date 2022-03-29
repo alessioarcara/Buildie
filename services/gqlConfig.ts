@@ -85,10 +85,10 @@ export const UPDATE_GAME_MUTATION = gql`
     ) {
       data {
         gameStatus
-        initiatorGameover
-        initiatorBoard
-        inviteeGameover
-        inviteeBoard
+        players {
+          user
+          board
+        }
       }
       problem
     }
@@ -99,11 +99,10 @@ export const GAME_QUERY = gql`
   query ($gameId: String!) {
     game(gameId: $gameId) {
       gameStatus
-      initiatorBoard
-      initiatorGameover
-      inviteeGameover
-      inviteeBoard
-      winner
+      players {
+        user
+        board
+      }
     }
   }
 `;

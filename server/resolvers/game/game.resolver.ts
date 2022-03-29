@@ -4,8 +4,12 @@ import {
   Args,
   Ctx,
   Mutation,
+  PubSub,
+  PubSubEngine,
   Query,
   Resolver,
+  Root,
+  Subscription,
   UseMiddleware,
 } from "type-graphql";
 import {
@@ -22,6 +26,7 @@ import {
 } from "./gameTypes";
 import { isAuth } from "../../middlewares/isAuth";
 import Context from "../../types/context";
+// import { PlayerModel } from "../../models/Player";
 
 @Resolver()
 export default class GameResolver {
@@ -42,8 +47,7 @@ export default class GameResolver {
 
     // 2. Create a new game
     const game = await GameModel.create({
-      initiator: initiator?.username,
-      invitee: invitee.username,
+      players: [{ user: initiator?._id }, { user: invitee._id }],
     });
 
     const expo = new Expo();
@@ -81,43 +85,57 @@ export default class GameResolver {
   @UseMiddleware(isAuth)
   async updateGame(
     @Args() { gameId, gameOver, playerBoard }: UpdateGameArgs,
-    @Ctx() ctx: Context
+    @Ctx() ctx: Context,
+    @PubSub() pubSub: PubSubEngine
   ): Promise<UpdateGamePayload> {
     const game = await GameModel.findById(gameId);
-    const user = await UserModel.findById(ctx.user).lean();
 
     if (!game || game.gameStatus === GameStatus.FINISHED)
       return { problem: INVALID_GAME };
 
-    switch (user?.username) {
-      case game.initiator:
-        game.initiatorBoard = playerBoard;
-        game.initiatorGameover = gameOver;
-        break;
-      case game.invitee:
-        if (game.gameStatus === GameStatus.IDLE) {
-          game.gameStatus = GameStatus.STARTED;
-        }
-        game.inviteeBoard = playerBoard;
-        game.inviteeGameover = gameOver;
-        break;
+    const player = game.players.find(
+      (player) => player.user?.toString() === ctx.user
+    );
+
+    if (player) {
+      if (game.gameStatus === GameStatus.IDLE) player.isReady = true;
+      player.board = playerBoard;
+      player.gameover = gameOver;
     }
 
-    if (game.initiatorGameover) {
-      game.gameStatus = GameStatus.FINISHED;
-      game.winner = game.invitee;
-    } else if (game.inviteeGameover) {
-      game.gameStatus = GameStatus.FINISHED;
-      game.winner = game.initiator;
+    if (
+      game.gameStatus === GameStatus.IDLE &&
+      game.players.every((player) => player.isReady)
+    ) {
+      game.gameStatus = GameStatus.STARTED;
+    } else if (game.gameStatus === GameStatus.STARTED) {
+      const survivingPlayers = game.players.filter(
+        (player) => !player.gameover
+      );
+      if (survivingPlayers.length === 1) {
+        game.gameStatus = GameStatus.FINISHED;
+        game.winner = survivingPlayers[0].user!.toString();
+      }
     }
 
     await game.save();
+    await pubSub.publish(gameId, {
+      _id: game._id,
+      gameStatus: game.gameStatus,
+      players: game.players,
+      winner: game.winner,
+    });
+
     return { data: game };
   }
 
   @Query(() => Game)
-  @UseMiddleware(isAuth)
   async game(@Arg("gameId") gameId: string): Promise<Game> {
     return await GameModel.findById(gameId).lean();
+  }
+
+  @Subscription({ topics: ({ args }) => args.gameId })
+  gameUpdate(@Arg("gameId") _: string, @Root() game: Game): Game {
+    return game;
   }
 }
