@@ -88,10 +88,6 @@ export const graphqlBaseQueryWithReauth =
     }
   };
 
-const client = createClient({
-  url: "ws://192.168.178.90:4000/graphql",
-});
-
 export const gameApi = createApi({
   reducerPath: "gameApi",
   baseQuery: graphqlBaseQueryWithReauth({
@@ -104,7 +100,7 @@ export const gameApi = createApi({
       return headers;
     },
   }),
-  tagTypes: ["Scores", "Game"],
+  tagTypes: ["Scores"],
   endpoints: (builder) => ({
     signup: builder.mutation<AuthResponse, SignupRequest>({
       query: (user) => ({
@@ -162,33 +158,35 @@ export const gameApi = createApi({
         gameId,
         { updateCachedData, cacheDataLoaded, cacheEntryRemoved }
       ) {
+        const client = createClient({
+          url: "ws://192.168.178.90:4000/graphql",
+        });
+
         try {
           await cacheDataLoaded;
-        } catch {}
-        (async () => {
-          const onNext = (payload: any) => {
-            updateCachedData(() => {
-              return payload.data.gameUpdate;
-            });
-          };
-
-          let unsubscribe = () => {
-            console.log("UNSUBSCRIBE");
-          };
 
           await new Promise((resolve, reject) => {
-            unsubscribe = client.subscribe(
+            client.subscribe(
               {
                 query: `subscription { gameUpdate(gameId: "${gameId}") { gameStatus winner players { user board } } }`,
               },
               {
-                next: onNext,
+                next: (payload: { data: { gameUpdate: GameData } }) => {
+                  updateCachedData(() => {
+                    return payload.data.gameUpdate;
+                  });
+                },
                 error: reject,
                 complete: () => resolve,
               }
             );
           });
-        })();
+        } catch (err) {
+          console.log(err);
+        }
+
+        await cacheEntryRemoved;
+        client.dispose();
       },
     }),
     updateGame: builder.mutation<GameResponse, GameRequest>({

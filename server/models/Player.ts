@@ -18,11 +18,9 @@ export class Player {
   @prop({ type: [Number], default: [] })
   board: number[];
 
-  @Field()
   @prop({ default: false })
   gameover: boolean;
 
-  @Field()
   @prop({ default: false })
   isReady: boolean;
 }

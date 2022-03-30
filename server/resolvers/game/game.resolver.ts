@@ -26,7 +26,6 @@ import {
 } from "./gameTypes";
 import { isAuth } from "../../middlewares/isAuth";
 import Context from "../../types/context";
-// import { PlayerModel } from "../../models/Player";
 
 @Resolver()
 export default class GameResolver {
@@ -114,7 +113,10 @@ export default class GameResolver {
       );
       if (survivingPlayers.length === 1) {
         game.gameStatus = GameStatus.FINISHED;
-        game.winner = survivingPlayers[0].user!.toString();
+        // workaround
+        game.winner = (
+          await UserModel.findById(survivingPlayers[0].user)
+        )?.username!;
       }
     }
 

@@ -9,6 +9,7 @@ import GameClass from "@models/Game";
 import useGameLoop from "@hooks/useGameLoop";
 import useForceUpdate from "@hooks/useForceUpdate";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
+import { useAppSelector } from "@store/hooks";
 
 type MultiplayerGameScreenProps = {
   navigation: NativeStackNavigationProp<
@@ -23,6 +24,7 @@ const MultiplayerGameScreen = ({
   route,
 }: MultiplayerGameScreenProps) => {
   const { data: sharedGame } = useGameQuery(route.params.gameId);
+  const userId = useAppSelector((state) => state.auth.userId);
 
   const [updateGame] = useUpdateGameMutation();
 
@@ -78,11 +80,14 @@ const MultiplayerGameScreen = ({
     draw();
   }, []);
 
+  /**
+   * TODO: not scalable, check for other solution later
+   * ideally we want to have many opponent boards as number of players.
+   */
   const opponentBoard = useMemo(
     () =>
-      (route.params.initiator
-        ? sharedGame?.inviteeBoard
-        : sharedGame?.initiatorBoard) ?? [],
+      sharedGame?.players.filter((player) => player.user !== userId)[0].board ??
+      [],
     [sharedGame]
   );
 

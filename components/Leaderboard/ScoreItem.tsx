@@ -24,7 +24,7 @@ const ScoreItem = ({ rank, score, name, me }: ScoreProps) => {
       </View>
       <View style={styles.field}>
         <DefaultText style={{ ...styles.text, color: me ? "yellow" : "white" }}>
-          {name.slice(0, 6)}
+          {name.slice(0, 7)}
         </DefaultText>
       </View>
     </View>

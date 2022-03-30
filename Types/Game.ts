@@ -1,3 +1,5 @@
+import { PlayerData } from "./Player";
+
 type GameState = {
   initialSpeed?: number;
   initialLines?: number;
@@ -25,10 +27,7 @@ export type GameData = {
   _id: string;
   gameStatus: GameStatus;
   winner: string;
-  initiatorBoard: number[];
-  initiatorGameover: boolean;
-  inviteeBoard: number[];
-  inviteeGameOver: boolean;
+  players: PlayerData[];
 };
 
 export type GameResponse = {
