@@ -13,6 +13,7 @@ Alessio Arcara
 * combo system?
 * VS mode
 * FFA mode
+* MAP mode?
 * matchmaking with Elo rating system
 * unlockable profile avatars via games won like Warcraft 3
 * profile with online stats and brief description
