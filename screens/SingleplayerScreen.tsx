@@ -1,7 +1,7 @@
 import { GradientBackground, Game, IconButton } from "@components";
 import { useAppDispatch, useAppSelector } from "@store/hooks";
 import React, { useCallback, useEffect, useRef } from "react";
-import { AppState } from "react-native";
+import { AppState, AppStateStatus } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { setGameState } from "@store/gameState";
 import useConst from "@hooks/useConst";
@@ -81,7 +81,7 @@ const SingleplayerScreen = ({ navigation }: SingleplayerScreenProps) => {
     );
   };
 
-  const handleAppStateChange = useCallback((nextAppState) => {
+  const handleAppStateChange = useCallback((nextAppState: AppStateStatus) => {
     if (
       appState.current === "active" &&
       nextAppState.match(/inactive|background/)
@@ -114,9 +114,12 @@ const SingleplayerScreen = ({ navigation }: SingleplayerScreenProps) => {
   });
 
   useEffect(() => {
-    AppState.addEventListener("change", handleAppStateChange);
+    const subscription = AppState.addEventListener(
+      "change",
+      handleAppStateChange
+    );
     return () => {
-      AppState.removeEventListener("change", handleAppStateChange);
+      subscription.remove();
     };
   }, []);
 

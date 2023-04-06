@@ -5,15 +5,18 @@ import AppNavigator from "@config/AppNavigator";
 import { AppBootstrap } from "@components";
 import { init } from "./helpers/db";
 import * as Notifications from "expo-notifications";
+import { Platform } from "react-native";
 
-init()
-  .then(() => {
-    console.log("Initialized db success.");
-  })
-  .catch((err) => {
-    console.log("Initialized db failed.");
-    console.log(err);
-  });
+if (Platform.OS !== "web") {
+  init()
+    .then(() => {
+      console.log("Initialized db success.");
+    })
+    .catch((err) => {
+      console.log("Initialized db failed.");
+      console.log(err);
+    });
+}
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({

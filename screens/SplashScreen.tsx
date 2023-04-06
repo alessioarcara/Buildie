@@ -1,4 +1,4 @@
-import { ActivityIndicator, View } from "react-native";
+import { ActivityIndicator, Platform, View } from "react-native";
 import React, { useEffect } from "react";
 import * as SecureStore from "expo-secure-store";
 import { useAppDispatch } from "@store/hooks";
@@ -16,7 +16,11 @@ const SplashScreen = () => {
   useEffect(() => {
     // authSlice
     (async () => {
-      const userData = await SecureStore.getItemAsync(USER_DATA);
+      let userData = null;
+      if (Platform.OS !== "web") {
+        userData = await SecureStore.getItemAsync(USER_DATA);
+      }
+
       if (!userData) {
         dispatch(setDidTryToLogin());
         return;

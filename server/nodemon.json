@@ -1,8 +1,8 @@
 {
-    "env": {
-      "DATABASE_URL": "mongodb://argonauta.synology.me:49153/polibo",
-      "PORT": 4000,
-      "ACCESS_TOKEN_KEY": "jdskjfdsjkfjksdjkfdsjfjsdjkfkdsjfjkdsjfsdjkfjsdjfjsdfjsdj",
-      "REFRESH_TOKEN_KEY": "rtetretertereroeereuiuieruituerutuieruiterutuieriuureurr"
-    }
+  "env": {
+    "DATABASE_URL": "mongodb://argonauta.synology.me:49153/polibo",
+    "PORT": 4000,
+    "ACCESS_TOKEN_KEY": "jdskjfdsjkfjksdjkfdsjfjsdjkfkdsjfjkdsjfsdjkfjsdjfjsdfjsdj",
+    "REFRESH_TOKEN_KEY": "rtetretertereroeereuiuieruituerutuieruiterutuieriuureurr"
+  }
 }
