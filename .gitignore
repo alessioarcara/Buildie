@@ -1,5 +1,7 @@
 node_modules/
 server/node_modules
+rust_server/target
+Cargo.lock
 .expo/
 dist/
 npm-debug.*
@@ -10,6 +12,7 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
+rust_server/target
 
 # macOS
 .DS_Store
