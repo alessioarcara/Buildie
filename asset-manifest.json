@@ -1,0 +1,39 @@
+{
+  "files": {
+    "main.js": "/github.io/buildie/static/js/main.35f7829a.js",
+    "static/js/242.005a62de.js": "/github.io/buildie/static/js/242.005a62de.js",
+    "static/media/1.mp3": "/github.io/buildie/static/media/1.9e5448f0ff23062ed1f8.mp3",
+    "static/media/2.mp3": "/github.io/buildie/static/media/2.f6683debab2372d5413d.mp3",
+    "static/media/3.mp3": "/github.io/buildie/static/media/3.b3c0cfc659997b15729a.mp3",
+    "static/media/4.mp3": "/github.io/buildie/static/media/4.4fd2c8beab86c1a97b34.mp3",
+    "static/media/5.mp3": "/github.io/buildie/static/media/5.acc83717048193639235.mp3",
+    "static/media/6.mp3": "/github.io/buildie/static/media/6.11b9fa5e91fdc51c4743.mp3",
+    "static/media/7.mp3": "/github.io/buildie/static/media/7.663e7a140d75a0c539f5.mp3",
+    "static/media/8.mp3": "/github.io/buildie/static/media/8.51125fe4e80f5942fe14.mp3",
+    "static/media/9.mp3": "/github.io/buildie/static/media/9.be7a7c57501f45f42074.mp3",
+    "static/media/10.mp3": "/github.io/buildie/static/media/10.503b5d06d20afcb8ebcd.mp3",
+    "static/media/11.mp3": "/github.io/buildie/static/media/11.60240f4ef5de6806053f.mp3",
+    "static/media/FontAwesome.ttf": "/github.io/buildie/static/media/FontAwesome.1e59d2330b4c6deb84b3.ttf",
+    "static/media/dogbyte.otf": "/github.io/buildie/static/media/dogbyte.57b4a9fc13399c184d98.otf",
+    "favicon.ico": "/github.io/buildie/favicon.ico",
+    "index.html": "/github.io/buildie/index.html",
+    "static/media/trophy.png": "/github.io/buildie/static/media/trophy.269221212b70985da365.png",
+    "static/media/blocks.png": "/github.io/buildie/static/media/blocks.a307cb9687beb7e71d91.png",
+    "static/media/lvl.png": "/github.io/buildie/static/media/lvl.071eacba47cc3b2faf0a.png",
+    "static/media/submit.png": "/github.io/buildie/static/media/submit.c4e71662db4568ae125b.png",
+    "static/media/replay.png": "/github.io/buildie/static/media/replay.092a3228e1b5bdd03ce6.png",
+    "static/media/escape.png": "/github.io/buildie/static/media/escape.5d7250728f52729bb797.png",
+    "static/media/play.png": "/github.io/buildie/static/media/play.560179b467ed1fcee17a.png",
+    "static/media/pause.png": "/github.io/buildie/static/media/pause.4bd96f4489319d841178.png",
+    "favicon-32.png": "/github.io/buildie/favicon-32.png",
+    "favicon-16.png": "/github.io/buildie/favicon-16.png",
+    "serve.json": "/github.io/buildie/serve.json",
+    "manifest.json": "/github.io/buildie/manifest.json",
+    "main.35f7829a.js.map": "/github.io/buildie/static/js/main.35f7829a.js.map",
+    "242.005a62de.js.map": "/github.io/buildie/static/js/242.005a62de.js.map"
+  },
+  "entrypoints": [
+    "static/js/242.005a62de.js",
+    "static/js/main.35f7829a.js"
+  ]
+}
