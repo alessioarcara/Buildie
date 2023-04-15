@@ -1,6 +1,6 @@
 {
   "files": {
-    "main.js": "/Buildie/static/js/main.a70ffa63.js",
+    "main.js": "/Buildie/static/js/main.4f84e606.js",
     "static/js/242.314ffc94.js": "/Buildie/static/js/242.314ffc94.js",
     "static/media/1.mp3": "/Buildie/static/media/1.9e5448f0ff23062ed1f8.mp3",
     "static/media/2.mp3": "/Buildie/static/media/2.f6683debab2372d5413d.mp3",
@@ -29,11 +29,11 @@
     "favicon-16.png": "/Buildie/favicon-16.png",
     "serve.json": "/Buildie/serve.json",
     "manifest.json": "/Buildie/manifest.json",
-    "main.a70ffa63.js.map": "/Buildie/static/js/main.a70ffa63.js.map",
+    "main.4f84e606.js.map": "/Buildie/static/js/main.4f84e606.js.map",
     "242.314ffc94.js.map": "/Buildie/static/js/242.314ffc94.js.map"
   },
   "entrypoints": [
     "static/js/242.314ffc94.js",
-    "static/js/main.a70ffa63.js"
+    "static/js/main.4f84e606.js"
   ]
 }
