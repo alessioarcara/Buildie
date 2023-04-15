@@ -1,1 +1,0 @@
-/Users/alessioarcara/Visual_Studio/buildie/rust_server/target/debug/librust_server.rlib: /Users/alessioarcara/Visual_Studio/buildie/rust_server/src/lib.rs /Users/alessioarcara/Visual_Studio/buildie/rust_server/src/schema.rs
