@@ -4,7 +4,7 @@ import JoystickButton from "./JoystickButton";
 import Commands from "@constants/Commands";
 
 type JoystickProps = {
-  handleInput: (key: string) => void;
+  handleInput: (command: Commands) => void;
 };
 
 const Joystick = ({ handleInput }: JoystickProps) => {
